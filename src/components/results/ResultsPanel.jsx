@@ -12,12 +12,9 @@ export default function ResultsPanel({ cvData, zones, unitSystem }) {
   }
 
   return (
-    <div
-      id="results"
-      className="space-y-6 animate-fade-in"
-    >
-      <CVDisplay cvData={cvData} unitSystem={unitSystem} />
+    <div id="results" className="space-y-6 animate-fade-in">
       <ZonesTable zones={zones} unitSystem={unitSystem} />
+      <CVDisplay cvData={cvData} unitSystem={unitSystem} />
     </div>
   );
 }

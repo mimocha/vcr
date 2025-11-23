@@ -35,19 +35,23 @@ export default function Select({
         value={value}
         onChange={onChange}
         className={`
-          w-full px-4 py-2 border rounded-xl backdrop-blur-sm
+          w-full px-4 py-2 border rounded-xl backdrop-blur-md
           focus:outline-none focus:ring-2 focus:ring-offset-0
-          transition-colors cursor-pointer
+          transition-all cursor-pointer
           ${
             hasError
               ? isDark
                 ? "border-red-400 focus:ring-red-400 focus:border-red-400 bg-red-500/10 text-red-200"
                 : "border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50"
               : isDark
-                ? "border-white/20 focus:ring-blue-400 focus:border-blue-400 bg-white/10 text-white"
-                : "border-gray-300 focus:ring-blue-500 focus:border-blue-500 bg-white/80"
+                ? "border-white/[0.15] focus:ring-blue-400 focus:border-blue-400 bg-white/[0.05] text-white"
+                : "border-white/40 focus:ring-blue-500 focus:border-blue-500 bg-white/60"
           }
         `}
+        style={{
+          backdropFilter: 'blur(8px) saturate(150%)',
+          WebkitBackdropFilter: 'blur(8px) saturate(150%)',
+        }}
         aria-invalid={hasError}
         aria-describedby={hasError ? `${id}-error` : undefined}
         {...props}

@@ -17,12 +17,12 @@ export default function Button({
   const { isDark } = useTheme();
 
   const baseStyles =
-    "px-6 py-3 rounded-xl font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm";
+    "px-6 py-3 rounded-xl font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-xl";
 
   const variants = {
     primary: isDark
-      ? "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400 active:bg-blue-700"
-      : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 active:bg-blue-800",
+      ? "bg-gradient-to-r from-blue-500/90 via-indigo-600/90 to-purple-600/90 text-white hover:opacity-80 focus:ring-blue-400 active:brightness-90 border border-white/20"
+      : "bg-gradient-to-r from-blue-600/90 via-blue-700/90 to-indigo-700/90 text-white hover:opacity-80 focus:ring-blue-500 active:brightness-90 border border-white/50",
     secondary: isDark
       ? "bg-white/10 text-gray-200 hover:bg-white/20 focus:ring-gray-400 active:bg-white/30 border border-white/20"
       : "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400 active:bg-gray-400",

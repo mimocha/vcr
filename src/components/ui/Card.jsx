@@ -11,17 +11,30 @@ export default function Card({ children, title, className = "", ...props }) {
   return (
     <div
       className={`
-        rounded-2xl backdrop-blur-md p-6 border transition-colors
-        ${isDark
-          ? 'bg-white/10 border-white/20'
-          : 'bg-white/70 border-white/50 shadow-lg'
+        rounded-2xl backdrop-blur-xl p-6 border transition-all
+        ${
+          isDark
+            ? "bg-white/[0.12] border-white/[0.15] shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
+            : "bg-white/[0.01] border-white/30 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
         }
         ${className}
       `}
+      style={{
+        backdropFilter: isDark
+          ? "blur(6px) saturate(180%)"
+          : "blur(6px) saturate(70%)",
+        WebkitBackdropFilter: isDark
+          ? "blur(6px) saturate(180%)"
+          : "blur(6px) saturate(70%)",
+      }}
       {...props}
     >
       {title && (
-        <h2 className={`text-xl font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+        <h2
+          className={`text-xl font-semibold mb-4 ${
+            isDark ? "text-white" : "text-gray-800"
+          }`}
+        >
           {title}
         </h2>
       )}

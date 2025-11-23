@@ -1,30 +1,11 @@
 /**
  * ThemeToggle Component
- * Toggle between auto/light/dark theme modes
+ * Toggle between light/dark theme modes
  */
 
 import { useTheme, THEME_MODES } from "../../contexts/ThemeContext";
 
 const ThemeIcon = ({ mode, isDark }) => {
-  if (mode === THEME_MODES.AUTO) {
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        className="w-5 h-5"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-        />
-      </svg>
-    );
-  }
-
   if (mode === THEME_MODES.LIGHT) {
     return (
       <svg
@@ -65,38 +46,27 @@ const ThemeIcon = ({ mode, isDark }) => {
 export default function ThemeToggle() {
   const { themeMode, cycleThemeMode, isDark } = useTheme();
 
-  const getModeLabel = () => {
-    switch (themeMode) {
-      case THEME_MODES.AUTO:
-        return "Auto";
-      case THEME_MODES.LIGHT:
-        return "Light";
-      case THEME_MODES.DARK:
-        return "Dark";
-      default:
-        return "Auto";
-    }
-  };
-
   return (
     <button
       onClick={cycleThemeMode}
       className={`
-        fixed bottom-6 right-6
-        flex items-center gap-2 px-4 py-3
-        rounded-full backdrop-blur-md border
+        flex items-center justify-center p-3
+        rounded-full backdrop-blur-xl border
         transition-all hover:scale-105 active:scale-95
         ${
           isDark
-            ? "bg-white/10 border-white/20 text-white hover:bg-white/20"
-            : "bg-white/70 border-white/50 text-gray-800 hover:bg-white/90 shadow-lg"
+            ? "bg-white/[0.08] border-white/[0.15] text-white hover:bg-white/[0.12] shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
+            : "bg-white/80 border-white/60 text-gray-800 hover:bg-white/90 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
         }
       `}
-      aria-label={`Theme mode: ${getModeLabel()}`}
-      title="Change theme mode"
+      style={{
+        backdropFilter: 'blur(16px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+      }}
+      aria-label="Toggle theme"
+      title="Toggle theme"
     >
       <ThemeIcon mode={themeMode} isDark={isDark} />
-      <span className="text-sm font-medium">{getModeLabel()}</span>
     </button>
   );
 }
