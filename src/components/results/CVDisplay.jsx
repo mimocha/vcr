@@ -99,7 +99,7 @@ export default function CVDisplay({
                 isDark ? "text-green-300" : "text-green-600"
               }`}
             >
-              Anaerobic Distance Capacity (D')
+              Anaerobic Distance Capacity (D&apos;)
             </p>
             <p
               className={`text-2xl font-bold ${
@@ -107,6 +107,15 @@ export default function CVDisplay({
               }`}
             >
               {d_prime.toFixed(0)} meters
+              {d_prime_estimated && (
+                <span
+                  className={`text-xs font-normal ml-2 ${
+                    isDark ? "text-green-200" : "text-green-700"
+                  }`}
+                >
+                  (estimated)
+                </span>
+              )}
             </p>
             <p
               className={`text-xs mt-1 ${
