@@ -6,6 +6,8 @@ import TestSelector from "./components/calculator/TestSelector";
 import TestInput from "./components/calculator/TestInput";
 import CalculateButton from "./components/calculator/CalculateButton";
 import ResultsPanel from "./components/results/ResultsPanel";
+import ThemeToggle from "./components/ui/ThemeToggle";
+import { useTheme } from "./contexts/ThemeContext";
 
 import {
   calculateCV30min,
@@ -20,6 +22,8 @@ import { DEFAULT_TEST_TYPE, TEST_TYPES } from "./constants/testTypes";
 import { UNIT_SYSTEMS } from "./constants/zoneDefinitions";
 
 function App() {
+  const { backgroundGradient } = useTheme();
+
   // State management
   const [testType, setTestType] = useState(DEFAULT_TEST_TYPE);
   const [unitSystem, setUnitSystem] = useState(UNIT_SYSTEMS.METRIC);
@@ -215,7 +219,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
+    <div className={`min-h-screen py-8 px-4 transition-colors ${backgroundGradient}`}>
       <div className="max-w-4xl mx-auto">
         <Header
           unitSystem={unitSystem}
@@ -253,6 +257,8 @@ function App() {
 
         <Footer />
       </div>
+
+      <ThemeToggle />
     </div>
   );
 }

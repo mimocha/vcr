@@ -5,34 +5,49 @@
 
 export const ZONE_COLORS = {
   1: {
-    bg: "bg-green-50",
-    text: "text-green-800",
-    border: "border-green-200",
-    badge: "bg-green-100",
-  },
-  2: {
     bg: "bg-blue-50",
     text: "text-blue-800",
     border: "border-blue-200",
     badge: "bg-blue-100",
+    accent: "text-blue-600 dark:text-blue-400",
+    glassTint: "bg-blue-500/5",
+    glowColor: "blue",
+  },
+  2: {
+    bg: "bg-green-50",
+    text: "text-green-800",
+    border: "border-green-200",
+    badge: "bg-green-100",
+    accent: "text-green-600 dark:text-green-400",
+    glassTint: "bg-green-500/5",
+    glowColor: "green",
   },
   3: {
     bg: "bg-yellow-50",
     text: "text-yellow-800",
     border: "border-yellow-200",
     badge: "bg-yellow-100",
+    accent: "text-yellow-600 dark:text-yellow-400",
+    glassTint: "bg-yellow-500/5",
+    glowColor: "yellow",
   },
   4: {
     bg: "bg-orange-50",
     text: "text-orange-800",
     border: "border-orange-200",
     badge: "bg-orange-100",
+    accent: "text-orange-600 dark:text-orange-400",
+    glassTint: "bg-orange-500/5",
+    glowColor: "orange",
   },
   5: {
     bg: "bg-red-50",
     text: "text-red-800",
     border: "border-red-200",
     badge: "bg-red-100",
+    accent: "text-red-600 dark:text-red-400",
+    glassTint: "bg-red-500/5",
+    glowColor: "red",
   },
 };
 
