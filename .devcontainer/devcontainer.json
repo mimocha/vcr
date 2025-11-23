@@ -1,0 +1,34 @@
+{
+  "name": "VCR Calculator Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "npm install",
+  "forwardPorts": [5173],
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderName},type=bind,consistency=cached",
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+    "source=${env:HOME}${env:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached",
+    "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/root/.ssh,type=bind,consistency=cached"
+  ],
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "notify"
+    }
+  }
+}
