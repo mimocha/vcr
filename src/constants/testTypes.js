@@ -12,7 +12,7 @@ export const TEST_TYPES = {
 export const TEST_CONFIGS = {
   [TEST_TYPES.THIRTY_MIN]: {
     id: TEST_TYPES.THIRTY_MIN,
-    name: "30-Minute Test",
+    name: "30-Minutes Test",
     shortName: "30min",
     description: "Run maximum distance in exactly 30 minutes",
     duration: 1800, // seconds
@@ -20,14 +20,14 @@ export const TEST_CONFIGS = {
       {
         id: "distance",
         label: "Distance",
-        placeholder: "e.g., 7350",
+        placeholder: "e.g., 5000",
         unit: "meters",
         unitImperial: "miles",
         type: "number",
         required: true,
       },
     ],
-    recommended: true,
+    recommended: false,
     accuracy: "High (direct approximation of CV)",
   },
   [TEST_TYPES.COOPER]: {

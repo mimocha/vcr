@@ -4,47 +4,79 @@
  */
 
 import { UNIT_SYSTEMS } from "../../constants/zoneDefinitions";
+import { useTheme } from "../../contexts/ThemeContext";
+import ThemeToggle from "../ui/ThemeToggle";
 
 export default function Header({ unitSystem, onUnitSystemChange }) {
+  const { isDark } = useTheme();
+
   return (
     <header className="mb-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+      <div className="flex flex-col items-center md:flex-row md:items-center md:justify-between gap-4">
+        <div className="text-center md:text-left">
+          <h1
+            className={`text-3xl md:text-4xl font-bold ${
+              isDark ? "text-white" : "text-gray-800"
+            }`}
+          >
             Critical Velocity Calculator
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className={`mt-2 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
             Calculate your Critical Velocity and training zones
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-white rounded-lg shadow-md p-1">
-          <button
-            onClick={() => onUnitSystemChange(UNIT_SYSTEMS.METRIC)}
+        <div className="flex items-center gap-2">
+          <div
             className={`
-              px-4 py-2 rounded-md font-medium transition-colors
+              flex items-center gap-2 rounded-xl p-1 backdrop-blur-xl border transition-all
               ${
-                unitSystem === UNIT_SYSTEMS.METRIC
-                  ? "bg-blue-600 text-white"
-                  : "bg-transparent text-gray-600 hover:bg-gray-100"
+                isDark
+                  ? "bg-white/[0.08] border-white/30 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
+                  : "bg-white/80 border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
               }
             `}
+            style={{
+              backdropFilter: "blur(16px) saturate(180%)",
+              WebkitBackdropFilter: "blur(16px) saturate(180%)",
+            }}
           >
-            Metric
-          </button>
-          <button
-            onClick={() => onUnitSystemChange(UNIT_SYSTEMS.IMPERIAL)}
-            className={`
-              px-4 py-2 rounded-md font-medium transition-colors
-              ${
-                unitSystem === UNIT_SYSTEMS.IMPERIAL
-                  ? "bg-blue-600 text-white"
-                  : "bg-transparent text-gray-600 hover:bg-gray-100"
-              }
-            `}
-          >
-            Imperial
-          </button>
+            <button
+              onClick={() => onUnitSystemChange(UNIT_SYSTEMS.METRIC)}
+              className={`
+                px-4 py-2 rounded-lg font-medium transition-all
+                ${
+                  unitSystem === UNIT_SYSTEMS.METRIC
+                    ? isDark
+                      ? "bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 text-white"
+                      : "bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white"
+                    : isDark
+                    ? "bg-transparent text-gray-300 hover:bg-white/10"
+                    : "bg-transparent text-gray-600 hover:bg-gray-100"
+                }
+              `}
+            >
+              Metric
+            </button>
+            <button
+              onClick={() => onUnitSystemChange(UNIT_SYSTEMS.IMPERIAL)}
+              className={`
+                px-4 py-2 rounded-lg font-medium transition-all
+                ${
+                  unitSystem === UNIT_SYSTEMS.IMPERIAL
+                    ? isDark
+                      ? "bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 text-white"
+                      : "bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white"
+                    : isDark
+                    ? "bg-transparent text-gray-300 hover:bg-white/10"
+                    : "bg-transparent text-gray-600 hover:bg-gray-100"
+                }
+              `}
+            >
+              Imperial
+            </button>
+          </div>
+          <ThemeToggle />
         </div>
       </div>
     </header>

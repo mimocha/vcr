@@ -4,7 +4,11 @@
  * Reference: docs/zones.md
  */
 
-import { velocityToPacePerKm, velocityToPacePerMile } from './paceConversions.js';
+import {
+  velocityToPacePerKm,
+  velocityToPacePerMile,
+} from "./paceConversions.js";
+import { ZONE_DEFINITION } from "../../constants/zoneDefinitions.js";
 
 /**
  * Calculate training zones from Critical Velocity
@@ -19,57 +23,10 @@ export function calculateTrainingZones(cvVelocityMs) {
   }
 
   // Zone definitions as percentages of CV speed
-  const zones = [
-    {
-      number: 1,
-      name: "Easy",
-      speedMin: 0.70, // 70% of CV speed (slowest)
-      speedMax: 0.85, // 85% of CV speed (fastest for this zone)
-      description: "Conversational pace, sustainable for hours",
-      purpose: "Base aerobic development, recovery",
-      rpe: "3-4 out of 10",
-    },
-    {
-      number: 2,
-      name: "Steady State",
-      speedMin: 0.85, // 85% of CV speed
-      speedMax: 0.95, // 95% of CV speed
-      description: "Controlled effort, can speak in phrases",
-      purpose: "Aerobic efficiency, sustainable endurance",
-      rpe: "5-6 out of 10",
-    },
-    {
-      number: 3,
-      name: "Tempo",
-      speedMin: 0.95, // 95% of CV speed
-      speedMax: 1.00, // 100% of CV speed (CV pace)
-      description: "Comfortably hard, limited conversation",
-      purpose: "Lactate clearance, prolonged moderate intensity",
-      rpe: "7 out of 10",
-    },
-    {
-      number: 4,
-      name: "Threshold",
-      speedMin: 1.00, // 100% of CV speed (CV pace)
-      speedMax: 1.05, // 105% of CV speed
-      description: "Hard, breathing heavily, only 1-word responses",
-      purpose: "Lactate threshold, maximal lactate steady state",
-      rpe: "8 out of 10",
-    },
-    {
-      number: 5,
-      name: "VO₂ Max",
-      speedMin: 1.05, // 105% of CV speed
-      speedMax: 1.20, // 120% of CV speed
-      description: "Very hard, cannot speak, sustainable 3-8 minutes",
-      purpose: "Maximal oxygen uptake, running economy at high speed",
-      rpe: "9-10 out of 10",
-    },
-  ];
 
   // Calculate pace ranges for each zone
   // Note: Higher speed percentage = faster = lower pace (less time per distance)
-  return zones.map((zone) => {
+  return ZONE_DEFINITION.map((zone) => {
     const velocityMin = cvVelocityMs * zone.speedMin;
     const velocityMax = cvVelocityMs * zone.speedMax;
 
