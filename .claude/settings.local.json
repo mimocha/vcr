@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:frontrunnersports.com.au)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
