@@ -48,8 +48,8 @@ export default function Header({ unitSystem, onUnitSystemChange }) {
                 ${
                   unitSystem === UNIT_SYSTEMS.METRIC
                     ? isDark
-                      ? "bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 text-white"
-                      : "bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white"
+                      ? "bg-gradient-to-r from-cyan-600/80 via-blue-500/80 to-indigo-600/80 text-white"
+                      : "bg-gradient-to-r from-cyan-600/80 via-blue-600/80 to-indigo-600/80 text-white"
                     : isDark
                     ? "bg-transparent text-gray-300 hover:bg-white/10"
                     : "bg-transparent text-gray-600 hover:bg-gray-100"
@@ -65,8 +65,8 @@ export default function Header({ unitSystem, onUnitSystemChange }) {
                 ${
                   unitSystem === UNIT_SYSTEMS.IMPERIAL
                     ? isDark
-                      ? "bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 text-white"
-                      : "bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white"
+                      ? "bg-gradient-to-r from-cyan-600/80 via-blue-500/80 to-indigo-600/80 text-white"
+                      : "bg-gradient-to-r from-cyan-600/80 via-blue-600/80 to-indigo-600/80 text-white"
                     : isDark
                     ? "bg-transparent text-gray-300 hover:bg-white/10"
                     : "bg-transparent text-gray-600 hover:bg-gray-100"

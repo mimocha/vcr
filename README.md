@@ -21,6 +21,27 @@ This calculator helps runners determine their CV through various testing protoco
 - Client-side only - no data sent to servers
 - Fast and lightweight
 
+## Methodology & Sources
+
+This calculator is based on established running science methodologies:
+
+### Critical Velocity Calculation
+
+The CV calculation methods are based on the work of **Tom Schwartz (Tinman)**, who developed practical approaches to measuring critical velocity for runners. See [docs/formulas.md](docs/formulas.md) for detailed calculation methodology.
+
+### Training Zones
+
+The 5-zone training system currently uses zone percentages from the **Front Runner Sports** [Pace Zone Calculator](https://frontrunnersports.com.au/runningsquads/pacezonecalculator/), which applies the general framework developed by **Lange, G. & Pöhlitz, L.** (1995, updated 2014).
+
+Additional zone methodologies (including direct implementation of Lange & Pöhlitz tables from 2014 and 2022) are documented in [docs/sources/](docs/sources/) and planned for future implementation. See [docs/zones.md](docs/zones.md) for comprehensive zone documentation.
+
+### Future Development
+
+The calculator is planned to support multiple zone calculation methodologies, allowing users to choose their preferred system:
+- Front Runner Sports implementation (current default)
+- Lange & Pöhlitz tables (2014/2022)
+- Other established systems (Jack Daniels, 3-zone polarized, etc.)
+
 ## Tech Stack
 
 - React

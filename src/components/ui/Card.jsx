@@ -14,7 +14,7 @@ export default function Card({ children, title, className = "", ...props }) {
         rounded-2xl backdrop-blur-xl p-6 border transition-all
         ${
           isDark
-            ? "bg-white/[0.12] border-white/[0.15] shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
+            ? "bg-white/[0.05] border-white/[0.15] shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
             : "bg-white/[0.01] border-white/30 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
         }
         ${className}

@@ -14,15 +14,8 @@ import {
   calculateCV2Point,
 } from "./utils/calculations/cvCalculators";
 import { calculateTrainingZones } from "./utils/calculations/zoneCalculators";
-import {
-  milesToMeters,
-  metersToMiles,
-} from "./utils/calculations/paceConversions";
-import {
-  validateDistance,
-  validate2PointTest,
-  checkRealisticPace,
-} from "./utils/validators";
+import { milesToMeters } from "./utils/calculations/paceConversions";
+import { validateDistance, validate2PointTest } from "./utils/validators";
 
 import { DEFAULT_TEST_TYPE, TEST_TYPES } from "./constants/testTypes";
 import { UNIT_SYSTEMS } from "./constants/zoneDefinitions";
@@ -92,18 +85,6 @@ function App() {
           return;
         }
 
-        // Check realistic pace
-        const realisticCheck = checkRealisticPace(distanceMeters, 1800);
-        if (!realisticCheck.realistic) {
-          if (
-            !confirm(
-              `${realisticCheck.warning}\n\nDo you want to continue with this value?`
-            )
-          ) {
-            return;
-          }
-        }
-
         // Calculate CV
         const cv = calculateCV30min(distanceMeters);
         setCvData(cv);
@@ -123,7 +104,7 @@ function App() {
         // Validate Cooper test
         const distanceMeters = getDistanceInMeters(inputValues.distance);
         const validation = validateDistance(distanceMeters, {
-          min: 500,
+          min: 100,
           max: 5000,
         });
 
@@ -131,18 +112,6 @@ function App() {
           newErrors.distance = validation.error;
           setErrors(newErrors);
           return;
-        }
-
-        // Check realistic pace
-        const realisticCheck = checkRealisticPace(distanceMeters, 720);
-        if (!realisticCheck.realistic) {
-          if (
-            !confirm(
-              `${realisticCheck.warning}\n\nDo you want to continue with this value?`
-            )
-          ) {
-            return;
-          }
         }
 
         // Calculate CV

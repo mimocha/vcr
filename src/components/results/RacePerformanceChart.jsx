@@ -17,12 +17,13 @@ export default function RacePerformanceChart({
   cvData,
   unitSystem = UNIT_SYSTEMS.METRIC,
 }) {
+  const { isDark } = useTheme();
+
   if (!cvData || !cvData.velocity_ms || !cvData.d_prime) {
     return null;
   }
 
   const { velocity_ms, d_prime, d_prime_estimated } = cvData;
-  const { isDark } = useTheme();
 
   // Predict all standard race distances
   const racePredictions = predictAllRaces(
@@ -77,9 +78,13 @@ export default function RacePerformanceChart({
 
     // Show range
     const minPace =
-      unitSystem === UNIT_SYSTEMS.METRIC ? max.paceSecPerKm : max.paceSecPerMile;
+      unitSystem === UNIT_SYSTEMS.METRIC
+        ? max.paceSecPerKm
+        : max.paceSecPerMile;
     const maxPace =
-      unitSystem === UNIT_SYSTEMS.METRIC ? min.paceSecPerKm : min.paceSecPerMile;
+      unitSystem === UNIT_SYSTEMS.METRIC
+        ? min.paceSecPerKm
+        : min.paceSecPerMile;
 
     return `${formatFunc(minPace)} - ${formatFunc(maxPace)}`;
   };
@@ -118,7 +123,7 @@ export default function RacePerformanceChart({
             </tr>
           </thead>
           <tbody>
-            {racePredictions.map((race, index) => (
+            {racePredictions.map((race) => (
               <tr
                 key={race.id}
                 className={`
@@ -158,13 +163,15 @@ export default function RacePerformanceChart({
       <div
         className={`
         mt-4 p-3 rounded-xl backdrop-blur-sm border
-        ${isDark ? "bg-amber-500/10 border-amber-400/30" : "bg-amber-50/80 border-amber-200"}
+        ${
+          isDark
+            ? "bg-amber-500/10 border-amber-400/30"
+            : "bg-amber-50/80 border-amber-200"
+        }
       `}
       >
         <p
-          className={`text-sm ${
-            isDark ? "text-amber-200" : "text-amber-800"
-          }`}
+          className={`text-sm ${isDark ? "text-amber-200" : "text-amber-800"}`}
         >
           <strong>About these predictions:</strong>
         </p>
@@ -176,7 +183,8 @@ export default function RacePerformanceChart({
           {d_prime_estimated && (
             <>
               <li>
-                • Predictions use estimated D&apos; ({d_prime.toFixed(0)}m) ±100m confidence interval
+                • Predictions use estimated D&apos; ({d_prime.toFixed(0)}m)
+                ±100m confidence interval
               </li>
               <li>
                 • For higher accuracy, use the 2-Point Test to measure D&apos;

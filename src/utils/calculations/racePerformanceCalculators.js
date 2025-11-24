@@ -129,10 +129,9 @@ export function predictAllRaces(
  * Estimate D' for single-point tests (30-min, Cooper)
  * Uses conservative population-based estimate
  *
- * @param {string} testType - Type of test performed
  * @returns {number} Estimated D' in meters
  */
-export function estimateDPrime(testType) {
+export function estimateDPrime() {
   // For single-point tests, use conservative middle-ground estimate
   // Research shows typical values: 150-250m (recreational), 250-300m (trained), 300-400m (elite)
   const DEFAULT_D_PRIME = 250;

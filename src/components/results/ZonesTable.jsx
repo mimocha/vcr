@@ -12,12 +12,13 @@ export default function ZonesTable({
   zones,
   unitSystem = UNIT_SYSTEMS.METRIC,
 }) {
+  const { isDark } = useTheme();
+
   if (!zones || zones.length === 0) {
     return null;
   }
 
   const isMetric = unitSystem === UNIT_SYSTEMS.METRIC;
-  const { isDark } = useTheme();
 
   return (
     <Card title="Your Training Zones">

@@ -1,5 +1,13 @@
 /**
  * Training Zone System Definitions
+ *
+ * Current implementation uses zone percentages from Front Runner Sports
+ * pace zone calculator (https://frontrunnersports.com.au/runningsquads/pacezonecalculator/)
+ * which applies the general methodology framework by Lange, G. & Pöhlitz, L. (1995, updated 2014).
+ *
+ * Note: This is planned to be refactored to support multiple zone calculation methodologies.
+ * Alternative zone systems are documented in docs/sources/ for future implementation.
+ *
  * Reference: docs/zones.md
  */
 

@@ -16,12 +16,13 @@ export default function CVDisplay({
   cvData,
   unitSystem = UNIT_SYSTEMS.METRIC,
 }) {
+  const { isDark } = useTheme();
+
   if (!cvData) {
     return null;
   }
 
-  const { velocity_ms, pace_sec_per_km, d_prime } = cvData;
-  const { isDark } = useTheme();
+  const { velocity_ms, pace_sec_per_km, d_prime, d_prime_estimated } = cvData;
 
   // Convert to imperial if needed
   const paceSecPerMile = pace_sec_per_km * 1.60934;
@@ -137,7 +138,7 @@ export default function CVDisplay({
         <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>
           <strong>What is Critical Velocity?</strong> CV represents the
           theoretical maximum sustainable running pace. Efforts above CV deplete
-          your anaerobic capacity (D'), while efforts below CV can be sustained
+          your anaerobic capacity (D&apos;), while efforts below CV can be sustained
           for extended periods.
         </p>
       </div>
