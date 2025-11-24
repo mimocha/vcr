@@ -19,7 +19,7 @@ import { calculateTrainingZones } from "./utils/calculations/zoneCalculators";
 import { validateDistance, validate2PointTest } from "./utils/validators";
 
 import { DEFAULT_TEST_TYPE, TEST_TYPES } from "./constants/testTypes";
-import { UNIT_SYSTEMS } from "./constants/zoneDefinitions";
+import { UNIT_SYSTEMS, DEFAULT_ZONE_SYSTEM } from "./constants/zoneDefinitions";
 
 function App() {
   const { backgroundGradient, isDark } = useTheme();
@@ -28,6 +28,7 @@ function App() {
   const [testType, setTestType] = useState(DEFAULT_TEST_TYPE);
   const [unitSystem, setUnitSystem] = useState(UNIT_SYSTEMS.METRIC);
   const [cvMode, setCvMode] = useState("raw"); // 'raw' or 'adjusted'
+  const [zoneSystem, setZoneSystem] = useState(DEFAULT_ZONE_SYSTEM);
   const [inputValues, setInputValues] = useState({});
   const [errors, setErrors] = useState({});
   const [cvData, setCvData] = useState(null);
@@ -41,15 +42,15 @@ function App() {
     setZones(null);
   }, [testType]);
 
-  // Recalculate zones when CV mode changes
+  // Recalculate zones when CV mode or zone system changes
   useEffect(() => {
     if (cvData) {
       const selectedVelocity =
         cvMode === "raw" ? cvData.velocity_ms_raw : cvData.velocity_ms;
-      const trainingZones = calculateTrainingZones(selectedVelocity);
+      const trainingZones = calculateTrainingZones(selectedVelocity, zoneSystem, cvData.d_prime);
       setZones(trainingZones);
     }
-  }, [cvMode, cvData]);
+  }, [cvMode, cvData, zoneSystem]);
 
   // Handle input changes
   const handleInputChange = (inputId, value) => {
@@ -140,7 +141,7 @@ function App() {
       setCvData(cv);
 
       // Calculate zones
-      const trainingZones = calculateTrainingZones(cv.velocity_ms);
+      const trainingZones = calculateTrainingZones(cv.velocity_ms, zoneSystem, cv.d_prime);
       setZones(trainingZones);
 
       // Scroll to results
@@ -237,6 +238,8 @@ function App() {
               unitSystem={unitSystem}
               cvMode={cvMode}
               onCvModeChange={setCvMode}
+              zoneSystem={zoneSystem}
+              onZoneSystemChange={setZoneSystem}
             />
           )}
         </div>

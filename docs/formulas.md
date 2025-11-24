@@ -170,42 +170,143 @@ CV_pace_sec_per_km = 1000 / CV
 
 ## Training Zones
 
-**⚠️ SECTION UNDER DEVELOPMENT**
+Training zones are calculated using two different methodologies depending on the zone system selected:
 
-Training zones are typically calculated as percentages of Critical Velocity or related to specific physiological thresholds (lactate threshold, VO₂max, etc.). The exact methodology requires further research.
+### Zone System 1: Offset-Based (Default)
 
-### Common Approaches
+**Methodology:** Hybrid calculation using percentage-based for Z1-Z4 lower bounds and fixed time offsets for Z4 upper/Z5
 
-**1. Percentage-based zones (Jack Daniels, Pete Pfitzinger):**
+**Percentage-Based Zones (Z1-Z4 lower bounds):**
 
 ```javascript
-// Example zone calculations as percentages of CV pace
-Easy = CV_pace × 1.20 // 20% slower than CV
-Tempo = CV_pace × 1.05 // 5% slower than CV
-Threshold = CV_pace × 0.98 // 2% faster than CV
-VO2max = CV_pace × 0.90 // 10% faster than CV
+// Zone calculations as percentages of CV velocity (m/s)
+Zone 1 (Recovery/Easy): 70-85% of CV
+Zone 2 (Steady State): 85-90% of CV
+Zone 3 (Tempo): 90-97% of CV
+Zone 4 Lower: 97% of CV
 ```
 
-**2. Physiological threshold-based:**
+**Fixed Time Offset Zones (Z4 upper, Z5):**
 
-- **Lactate Threshold (LT):** Typically 85-90% of CV
-- **Anaerobic Threshold (AT):** Approximately 95-100% of CV
-- **VO₂max pace:** Typically faster than CV (relies on D')
+```javascript
+// Z4 upper and Z5 use fixed time offsets from CV pace
+Zone 4 Upper: CV pace - 10 seconds per km
+Zone 5 Lower: CV pace - 10 seconds per km (same as Z4 upper)
+Zone 5 Upper: CV pace - 20 seconds per km
+```
 
-**3. Heart rate-based zones:**
+**Implementation:**
+```javascript
+// For percentage-based zones (Z1-Z3, Z4 lower)
+velocityMin = cvVelocityMs * zone.speedMin
+velocityMax = cvVelocityMs * zone.speedMax
+paceSecPerKm = 1000 / velocity  // Convert velocity to pace
 
-Requires additional testing to correlate HR with CV-based paces.
+// For fixed time offset zones (Z4 upper, Z5)
+const cvPaceSecPerKm = 1000 / cvVelocityMs
+zone4Upper = cvPaceSecPerKm - 10  // seconds per km
+zone5Lower = cvPaceSecPerKm - 10  // seconds per km
+zone5Upper = cvPaceSecPerKm - 20  // seconds per km
+// Convert paces back to velocities: velocity = 1000 / paceSecPerKm
+```
 
-### TODO: Research & Validation Needed
+**Rationale:** This hybrid approach uses fixed time offsets for high-intensity zones to provide more intuitive pacing guidance than percentage-based calculations.
 
-- Determine scientifically validated zone percentages
-- Consider individual variability and experience level
-- Integrate D' (anaerobic capacity) for high-intensity zones
-- Validate against established training systems (Daniels, Pfitzinger, etc.)
+**Source:** Front Runner Sports pace zone calculator methodology, applying the general framework by Lange & Pöhlitz (1995, updated 2014)
 
-### Reference Site Comparison
+---
 
-The Front Runner Sports calculator uses empirically-fitted power law formulas that don't align with the simplified CV calculation. These may be based on specific athlete populations or alternative physiological models. Further investigation needed to determine if these zones have scientific validity or are proprietary formulations.
+### Zone System 2: Race Prediction-Based
+
+**Methodology:** Hybrid approach combining percentage-based (Z1-Z3) and race prediction-based (Z4-Z5) calculations
+
+This implements the original Lange & Pöhlitz methodology where high-intensity zones are anchored to specific race distances rather than simple CV percentages.
+
+#### Zones 1-3: Percentage-Based
+
+```javascript
+Zone 1 (Recovery/Easy): 70-85% of CV
+Zone 2 (Steady State): 85-90% of CV
+Zone 3 (Tempo): 90-97% of CV
+```
+
+#### Zones 4-5: Race Prediction-Based
+
+**Zone 4 (Threshold / Tempolauf - TL):**
+- **Lower Bound:** 10K race pace (slower)
+- **Upper Bound:** 5K race pace (faster)
+- **Physiological Target:** Competition-specific endurance, develops lactate threshold
+
+**Zone 5 (VO₂ Max / Wettkampfspezifische Ausdauer - WSA):**
+- **Lower Bound:** 3K race pace (slower)
+- **Upper Bound:** 1500m race pace (faster)
+- **Physiological Target:** Maximal oxygen uptake, develops vVO₂max
+
+#### Race Prediction Formula: Riegel Power Law
+
+Race times are predicted using the Riegel Power Law formula:
+
+```
+T₂ = T₁ × (D₂/D₁)^k
+```
+
+**Where:**
+- `T₁` = Reference time (30-minute test = 1800 seconds)
+- `D₁` = Reference distance = CV × 1800 + D'
+- `T₂` = Predicted time for target distance
+- `D₂` = Target distance (1500m, 3000m, 5000m, 10000m)
+- `k` = Fatigue factor (default: 1.06, range: 1.06-1.08 for amateurs)
+
+**Implementation:**
+```javascript
+// Reference: 30-minute test as baseline
+const referenceTimeSeconds = 1800;
+const referenceDistanceMeters = cvVelocityMs * 1800 + dPrime;
+
+// Predict race time using Riegel formula
+const predictedTimeSeconds = referenceTimeSeconds *
+  Math.pow(targetDistance / referenceDistanceMeters, fatigueFactor);
+
+// Convert to pace
+const paceSecPerKm = predictedTimeSeconds / (targetDistance / 1000);
+```
+
+**Rationale:**
+The Riegel Power Law is more accurate than the hyperbolic CV model for shorter race distances (1500m-10000m) because it accounts for the non-linear relationship between pace and distance at high intensities. This reflects the physiological reality that anaerobic contribution increases exponentially at faster paces.
+
+#### Why Race-Based Zones?
+
+The race prediction-based methodology recognizes that high-intensity training zones (Z4-Z5) correspond to specific race paces:
+- Z4 develops the ability to sustain 5K-10K race pace
+- Z5 develops the ability to sustain 1500m-3K race pace
+
+These zones scale **non-linearly** with performance - a percentage-based approach underestimates the pace increase for faster runners and overestimates it for slower runners.
+
+**Example Comparison:**
+
+For a runner with CV = 4.0 m/s (4:10/km):
+- **Percentage-based Z5 upper:** ~106% of CV = 3:56/km
+- **Race-based Z5 upper (1500m):** ~3:45-3:50/km (more accurate)
+
+The race-based approach provides more physiologically accurate training paces, especially for Z4-Z5 work.
+
+**Source:** Lange, G. & Pöhlitz, L. (1995, updated 2014). Original methodology from German athletics (DLV - Deutscher Leichtathletik-Verband)
+
+---
+
+### Implementation Notes
+
+**When to use D' for zone calculations:**
+- For single-point tests (30-min, Cooper, 45-min, 60-min), D' is **estimated** at 250m
+- For 2-point tests, D' is **calculated** directly from the test data
+- The Race Prediction-Based zone system **requires** D' for accurate predictions
+- If D' is unavailable, the system falls back to percentage-based calculations
+
+**Race prediction confidence:**
+- Race predictions using estimated D' have ±100m uncertainty
+- Race predictions using calculated D' are more accurate
+- The Riegel fatigue factor (1.06) is optimized for trained runners
+- Amateur runners may benefit from k=1.07-1.08 (steeper fatigue curve)
 
 ---
 
@@ -397,6 +498,25 @@ function calculateCV2Point(distance1, time1, distance2, time2) {
 
 ## Changelog
 
+- **2025-11-24_03:** Renamed zone systems for clarity
+  - Renamed "Front Runner Sports" → "Offset-Based" (hybrid percentage + time offset approach)
+  - Renamed "Lange & Pöhlitz 1995" → "Race Prediction-Based" (Riegel Power Law approach)
+  - Maintained source attributions throughout documentation
+  - Updated all system references to reflect methodology rather than source names
+- **2025-11-24_02:** Updated Offset-Based (formerly Front Runner Sports) zone system to hybrid approach
+  - Changed Z4 upper and Z5 from percentage-based to fixed time offsets
+  - Z4 upper: CV pace - 10 seconds per km (was 103% of CV)
+  - Z5: CV pace - 10s to CV pace - 20s (was 103%-106% of CV)
+  - Z1-Z4 lower bounds remain percentage-based with updated percentages (90.5%→90%, 97.25%→97%)
+  - This matches the actual Front Runner Sports website implementation
+  - Updated implementation examples to show both percentage-based and fixed time offset calculations
+- **2025-11-24_01:** Implemented Race Prediction-Based (Lange & Pöhlitz 1995) zone system
+  - Added Riegel Power Law formula for race time predictions
+  - Implemented hybrid zone calculation: percentage-based (Z1-Z3) + race-based (Z4-Z5)
+  - Zone 4 anchored to 10K/5K race paces, Zone 5 anchored to 3K/1500m race paces
+  - Documented the non-linear scaling behavior of high-intensity zones
+  - Updated training zones section with both zone system methodologies
+  - Added implementation notes on D' usage and race prediction confidence
 - **2025-11-23 (Updated):** Major revision based on Tom Schwartz (Tinman) methodology
   - Replaced complex power law formulas with simplified distance/time calculations
   - Added Tinman's Critical Speed Guide as primary source
@@ -404,6 +524,5 @@ function calculateCV2Point(distance1, time1, distance2, time2) {
   - Marked training zones section as "under development" pending further research
   - Updated all code examples to reflect simplified calculations
 - **2025-11-23 (Initial):** Initial documentation, reverse-engineered from Front Runner Sports reference site
-- **TODO:** Research and validate training zone percentages from scientific sources
 - **TODO:** Add unit tests validating calculations against known values
-- **TODO:** Implement race time prediction formulas using CV and D'
+- **TODO:** Validate race predictions against actual race performances

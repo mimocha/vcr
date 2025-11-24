@@ -31,16 +31,20 @@ The CV calculation methods are based on the work of **Tom Schwartz (Tinman)**, w
 
 ### Training Zones
 
-The 5-zone training system currently uses zone percentages from the **Front Runner Sports** [Pace Zone Calculator](https://frontrunnersports.com.au/runningsquads/pacezonecalculator/), which applies the general framework developed by **Lange, G. & Pöhlitz, L.** (1995, updated 2014).
+The calculator implements **two 5-zone training systems** based on frameworks by **Lange, G. & Pöhlitz, L.** (1995, updated 2014):
 
-Additional zone methodologies (including direct implementation of Lange & Pöhlitz tables from 2014 and 2022) are documented in [docs/sources/](docs/sources/) and planned for future implementation. See [docs/zones.md](docs/zones.md) for comprehensive zone documentation.
+1. **Offset-Based (Default):** Hybrid approach using percentage-based lower bounds and fixed time offsets for Z4-Z5 upper bounds
+   - Source: **Front Runner Sports** [Pace Zone Calculator](https://frontrunnersports.com.au/runningsquads/pacezonecalculator/)
+2. **Race Prediction-Based:** Uses Riegel Power Law for high-intensity zones (Z4-Z5) based on race predictions
+   - Source: Original **Lange & Pöhlitz** (1995) methodology
+
+See [docs/zones.md](docs/zones.md) for comprehensive zone documentation and [docs/sources/](docs/sources/) for reference materials.
 
 ### Future Development
 
-The calculator is planned to support multiple zone calculation methodologies, allowing users to choose their preferred system:
-- Front Runner Sports implementation (current default)
-- Lange & Pöhlitz tables (2014/2022)
-- Other established systems (Jack Daniels, 3-zone polarized, etc.)
+Additional zone calculation methodologies may be added:
+- Other established systems (Jack Daniels VDOT, 3-zone polarized, etc.)
+- Custom user-defined zones
 
 ## Tech Stack
 

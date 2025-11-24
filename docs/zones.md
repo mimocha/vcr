@@ -6,23 +6,69 @@ This document defines the CV-based 5-zone training system used in the VCR Calcul
 
 **Last Updated:** 2025-11-24
 
-> **Note:** The current zone percentage definitions are based on the [Front Runner Sports pace zone calculator](https://frontrunnersports.com.au/runningsquads/pacezonecalculator/) implementation. This calculator is planned to be refactored to support multiple zone calculation methodologies, including alternative systems by Lange & Pöhlitz and other established methods. See [Sources](#sources) for more information.
+> **Note:** The current zone percentage definitions are based on the [Front Runner Sports pace zone calculator](https://frontrunnersports.com.au/runningsquads/pacezonecalculator/) implementation, and the original work by Lange & Pöhlitz. See [Sources](#sources) for more information.
 
 ---
 
 ## Zone System Definition
 
-Our implementation currently uses a **5-zone CV-based system** with zone percentages derived from the Front Runner Sports calculator, which uses the general Lange & Pöhlitz methodology framework (1995, updated 2014).
+Our implementation supports **two 5-zone CV-based systems**:
 
-### Zone Overview
+1. **Offset-Based (Default):** Hybrid approach with percentage-based Z1-Z4 lower bounds and fixed time offsets for Z4-Z5 upper bounds
+2. **Race Prediction-Based:** Hybrid approach with race prediction-based Z4-Z5 using Riegel Power Law
 
-| Zone # | Name                 | Intensity        | Purpose                                 | Percent of Critical Velocity |
-| ------ | -------------------- | ---------------- | --------------------------------------- | ---------------------------- |
-| 1      | Recovery / Easy      | Low              | Basic endurance and fat metabolism      | ∼70%−85%                     |
-| 2      | Aerobic Endurance    | Moderate         | Build aerobic base                      | ∼85%−95%                     |
-| 3      | Tempo                | Comfortably hard | Improve long-run pace, comfortably hard | ∼95%−100%                    |
-| 4      | Threshold / CV Pace  | Hard             | Raise CV/MLSS                           | ∼100%−105%                   |
-| 5      | VO2​ Max / Intervals | Very hard        | Maximize oxygen uptake (VO2​ max)       | ∼105%−120%+                  |
+### Zone System 1: Offset-Based (Hybrid)
+
+Zones use a hybrid calculation approach: percentage-based for Z1-Z4 lower bounds, fixed time offsets for Z4 upper and Z5:
+
+| Zone # | Name            | Intensity        | Purpose                                 | Calculation Method                  |
+| ------ | --------------- | ---------------- | --------------------------------------- | ----------------------------------- |
+| 1      | Recovery / Easy | Low              | Basic endurance and fat metabolism      | 70%−85% of CV                       |
+| 2      | Steady State    | Moderate         | Build aerobic base                      | 85%−90% of CV                       |
+| 3      | Tempo           | Comfortably hard | Improve long-run pace, comfortably hard | 90%−97% of CV                       |
+| 4      | Threshold       | Hard             | Raise CV/MLSS                           | 97% of CV → **CV pace - 10s**       |
+| 5      | VO₂ Max         | Very hard        | Maximize oxygen uptake (VO₂ max)        | **CV pace - 10s → CV pace - 20s**   |
+
+**Key Feature:** Z4 upper and Z5 use **fixed time offsets** (CV pace minus 10/20 seconds per km) rather than percentages. This provides more intuitive pacing guidance at high intensities. Source: Front Runner Sports implementation of Lange & Pöhlitz framework.
+
+### Zone System 2: Race Prediction-Based (Riegel Power Law)
+
+Hybrid methodology: percentage-based for Z1-Z3, race prediction-based for Z4-Z5:
+
+| Zone # | Name            | Intensity        | Purpose                            | Calculation Method       |
+| ------ | --------------- | ---------------- | ---------------------------------- | ------------------------ |
+| 1      | Recovery / Easy | Low              | Basic endurance and fat metabolism | 70%−85% of CV            |
+| 2      | Steady State    | Moderate         | Build aerobic base                 | 85%−90% of CV            |
+| 3      | Tempo           | Comfortably hard | Improve long-run pace              | 90%−97% of CV            |
+| 4      | Threshold (TL)  | Hard             | Competition-specific endurance     | **10K → 5K race pace**   |
+| 5      | VO₂ Max (WSA)   | Very hard        | Maximal oxygen uptake              | **3K → 1500m race pace** |
+
+**Key Difference:** In the Race Prediction-Based system, Z4 and Z5 bounds are determined by predicted race paces using the Riegel Power Law formula, which accounts for the non-linear scaling of pace at high intensities. Source: Original Lange & Pöhlitz (1995) methodology.
+
+#### Why Race-Based Zones for Z4-Z5?
+
+The original Lange & Pöhlitz methodology recognizes that high-intensity training corresponds to specific race performance zones:
+
+- **Z4 (Tempolauf - TL):** Develops competition-specific endurance for 5K-10K races
+- **Z5 (Wettkampfspezifische Ausdauer - WSA):** Develops vVO₂max for 1500m-3K races
+
+Race-based zones scale **non-linearly** with performance:
+
+- Simple percentage-based zones **underestimate** Z4-Z5 paces for faster runners
+- Simple percentage-based zones **overestimate** Z4-Z5 paces for slower runners
+
+**Example:** Runner with CV = 4.0 m/s (4:10/km)
+
+- Percentage-based Z5 upper: ~106% of CV = **3:56/km**
+- Race-based Z5 upper (1500m): **3:45-3:50/km** (more accurate)
+
+The race prediction uses the **Riegel Power Law** formula:
+
+```
+T₂ = T₁ × (D₂/D₁)^1.06
+```
+
+This provides physiologically accurate paces for high-intensity training zones.
 
 ---
 
@@ -133,13 +179,16 @@ zone3_lower = CV_pace / 1.0; // Fastest end (100% of CV speed = CV pace)
 
 ```javascript
 // Zone 4 pace range (faster than CV)
-zone4_upper = CV_pace / 1.0; // Slowest end (100% of CV speed = CV pace)
-zone4_lower = CV_pace / 1.05; // Fastest end (105% of CV speed)
+// Lower bound: percentage-based
+zone4_lower = CV_pace / 0.97; // Slowest end (97% of CV speed)
+// Upper bound: fixed time offset
+zone4_upper = CV_pace - 10; // Fastest end (CV pace minus 10 seconds/km)
 ```
 
 **Characteristics:**
 
-- 100-105% of Critical Velocity speed
+- Lower bound: 97% of Critical Velocity speed
+- Upper bound: CV pace minus 10 seconds per km (fixed time offset)
 - Lactate threshold pace
 - Highest sustainable "hard" effort (15-30 min)
 - Critical for 10K-half marathon performance
@@ -165,13 +214,15 @@ zone4_lower = CV_pace / 1.05; // Fastest end (105% of CV speed)
 
 ```javascript
 // Zone 5 pace range (significantly faster than CV)
-zone5_upper = CV_pace / 1.05; // Slowest end (105% of CV speed)
-zone5_lower = CV_pace / 1.2; // Fastest end (120% of CV speed)
+// Both bounds use fixed time offsets
+zone5_lower = CV_pace - 10; // Slowest end (CV pace minus 10 seconds/km)
+zone5_upper = CV_pace - 20; // Fastest end (CV pace minus 20 seconds/km)
 ```
 
 **Characteristics:**
 
-- 105-120%+ of Critical Velocity speed
+- Lower bound: CV pace minus 10 seconds per km (same as Z4 upper)
+- Upper bound: CV pace minus 20 seconds per km
 - Fastest training zone
 - Elicits maximal aerobic response
 - Most demanding, requires full recovery
@@ -193,37 +244,44 @@ zone5_lower = CV_pace / 1.2; // Fastest end (120% of CV speed)
 
 ### Mathematical Patterns
 
-All zones are calculated as percentages of Critical Velocity speed:
+The Offset-Based system uses a **hybrid calculation approach**:
 
+**Percentage-Based (Z1-Z4 lower bounds):**
 ```
 Zone 1 (Easy):        70-85% of CV speed
-Zone 2 (Steady):      85-95% of CV speed
-Zone 3 (Tempo):       95-100% of CV speed
-Zone 4 (Threshold):   100-105% of CV speed
-Zone 5 (VO₂ Max):     105-120%+ of CV speed
+Zone 2 (Steady):      85-90% of CV speed
+Zone 3 (Tempo):       90-97% of CV speed
+Zone 4 Lower:         97% of CV speed
+```
+
+**Fixed Time Offsets (Z4 upper, Z5):**
+```
+Zone 4 Upper:         CV pace - 10 seconds/km
+Zone 5 (VO₂ Max):     CV pace - 10s to CV pace - 20s
 ```
 
 **Key Points:**
 
-- Zones 2 and 3 overlap at 85-95% (allows for individual variation)
-- Zone 4 includes CV pace as the slowest end (100%)
-- Zone 5 is the only zone significantly faster than CV
+- Z1-Z4 lower bounds use percentage-based calculation (70%, 85%, 90%, 97%)
+- Z4 upper and Z5 use fixed time offsets from CV pace (-10s, -20s per km)
+- Fixed time offsets provide more intuitive pacing guidance at high intensities
+- Source: Front Runner Sports implementation (Lange & Pöhlitz framework)
 - Note: When speed increases, pace (time per distance) decreases
-  - Example: 105% of CV speed = faster = lower pace number (less time per km)
+  - Example: 97% of CV speed = slower = higher pace number (more time per km)
 
 ### Relative Intensity
 
 Approximate relationship between zones (example assuming CV pace = 5:00 min/km):
 
-| Zone         | % of CV Speed | Pace Range (min/km) | Relative Effort |
-| ------------ | ------------- | ------------------- | --------------- |
-| Easy         | 70-85%        | 5:53-7:08           | Lowest          |
-| Steady State | 85-95%        | 5:16-5:53           | Low-Moderate    |
-| Tempo        | 95-100%       | 5:00-5:16           | Moderate        |
-| Threshold    | 100-105%      | 4:46-5:00           | Hard            |
-| VO₂ Max      | 105-120%      | 4:10-4:46           | Very Hard       |
+| Zone         | Calculation Method      | Pace Range (min/km) | Relative Effort |
+| ------------ | ----------------------- | ------------------- | --------------- |
+| Easy         | 70-85% of CV            | 5:53-7:08           | Lowest          |
+| Steady State | 85-90% of CV            | 5:33-5:53           | Low-Moderate    |
+| Tempo        | 90-97% of CV            | 5:09-5:33           | Moderate        |
+| Threshold    | 97% of CV → CV-10s      | 4:50-5:09           | Hard            |
+| VO₂ Max      | CV-10s → CV-20s         | 4:40-4:50           | Very Hard       |
 
-_Note: Faster speed = lower pace number. Example: 120% speed = 5:00 ÷ 1.20 = 4:10 min/km_
+_Note: Z1-Z4 lower use percentage-based calculation. Z4 upper and Z5 use fixed time offsets (CV pace - 10s and - 20s)._
 
 ---
 
@@ -394,14 +452,15 @@ The zone percentages used in this calculator are based on:
 - **Front Runner Sports.** [Pace Zone Calculator](https://frontrunnersports.com.au/runningsquads/pacezonecalculator/). Front Runner Sports, Australia. (Primary source for current zone percentage implementation)
 
 Front Runner Sports cites the general methodology as:
+
 - Lange, G., & Pöhlitz, L. (1995, updated 2014). Critical Velocity and training zone methodology.
 
 ### Alternative Zone Methodologies (Future Implementation)
 
 Alternative training zone systems are documented in [docs/sources/](sources/) for future implementation:
 
-- **Lange, G., & Pöhlitz, L.** (2014). [*Determination of prescribed velocities in basic endurance training*](sources/vcr_table_2014.pdf). Presented at Endurance Summit 2018, Skanderborg, Denmark.
-- **Lange, G., & Pöhlitz, L.** (2022). [*Determination of prescribed velocities in basic endurance training*](sources/vcr_table_2022.jpg) (Updated version).
+- **Lange, G., & Pöhlitz, L.** (2014). [_Determination of prescribed velocities in basic endurance training_](sources/vcr_table_2014.pdf). Presented at Endurance Summit 2018, Skanderborg, Denmark.
+- **Lange, G., & Pöhlitz, L.** (2022). [_Determination of prescribed velocities in basic endurance training_](sources/vcr_table_2022.jpg) (Updated version).
 
 ### Additional References
 
@@ -412,16 +471,32 @@ Alternative training zone systems are documented in [docs/sources/](sources/) fo
 
 ## Changelog
 
-- **2025-11-24:** Updated documentation with proper source citations
+- **2025-11-24_04:** Renamed zone systems for clarity
+  - Renamed "Front Runner Sports" → "Offset-Based" (hybrid percentage + time offset approach)
+  - Renamed "Lange & Pöhlitz 1995" → "Race Prediction-Based" (Riegel Power Law approach)
+  - Maintained source attributions throughout documentation
+  - Updated all system references to reflect methodology rather than source names
+- **2025-11-24_03:** Updated Offset-Based (formerly Front Runner Sports) methodology to hybrid approach
+  - Changed Z4-Z5 upper bounds from percentage-based to fixed time offsets
+  - Z4 upper: CV pace - 10 seconds per km (was 103% of CV)
+  - Z5: CV pace - 10s to CV pace - 20s (was 103%-106% of CV)
+  - Z1-Z4 lower bounds remain percentage-based (70%, 85%, 90%, 97%)
+  - Updated zone percentages: Z2 upper 90.5%→90%, Z3 upper 97.25%→97%
+  - This hybrid approach matches the actual Front Runner Sports website implementation
+  - Provides more intuitive pacing guidance at high intensities
+- **2025-11-24_02:** Implemented Race Prediction-Based (Lange & Pöhlitz 1995) zone system
+  - Added hybrid zone calculation: percentage-based (Z1-Z3) + race-based (Z4-Z5)
+  - Z4 anchored to 10K/5K race paces, Z5 anchored to 3K/1500m race paces
+  - Implemented Riegel Power Law formula for race predictions
+  - Documented non-linear scaling behavior of high-intensity zones
+  - Added comparison between Offset-Based and Race Prediction-Based methodologies
+  - Updated zone system definitions to explain both approaches
+- **2025-11-24_01:** Updated documentation with proper source citations
   - Clarified that current implementation uses Front Runner Sports zone percentages
   - Added reference materials (Lange & Pöhlitz 2014/2022 tables) to docs/sources/
   - Added note about planned refactoring to support multiple zone methodologies
-- **2025-11-23:** Replaced reverse-engineered formulas with percentage-based zone calculations
+- **2025-11-23_02:** Replaced reverse-engineered formulas with percentage-based zone calculations
   - All zones now calculated as percentages of Critical Velocity (70%-120%)
   - Simplified and more physiologically sound approach
   - Removed complex power-law and polynomial formulas
-- **2025-11-23:** Initial zone system documentation based on reference calculator
-- **TODO:** Add heart rate zone correlations
-- **TODO:** Validate zone durations against literature
-- **TODO:** Add practical training examples
-- **TODO:** Implement support for multiple zone calculation methodologies
+- **2025-11-23_01:** Initial zone system documentation based on reference calculator

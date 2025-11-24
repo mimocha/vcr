@@ -1,12 +1,13 @@
 /**
  * Training Zone System Definitions
  *
- * Current implementation uses zone percentages from Front Runner Sports
- * pace zone calculator (https://frontrunnersports.com.au/runningsquads/pacezonecalculator/)
- * which applies the general methodology framework by Lange, G. & Pöhlitz, L. (1995, updated 2014).
+ * Implements two zone calculation methodologies:
+ * 1. Offset-Based: Hybrid approach with percentage-based lower bounds and fixed time offsets
+ *    for upper bounds (based on Front Runner Sports implementation of Lange & Pöhlitz framework)
+ * 2. Race Prediction-Based: Uses Riegel Power Law for high-intensity zones
+ *    (original Lange & Pöhlitz 1995 methodology)
  *
- * Note: This is planned to be refactored to support multiple zone calculation methodologies.
- * Alternative zone systems are documented in docs/sources/ for future implementation.
+ * Source references and methodology details documented in docs/zones.md
  *
  * Reference: docs/zones.md
  */
@@ -79,38 +80,126 @@ export const ZONE_COLORS = {
   },
 };
 
-export const ZONE_DEFINITION = [
-  {
-    number: 1,
-    name: "Recovery / Easy",
-    speedMin: 0.7, // 70% of CV speed (slowest for this zone)
-    speedMax: 0.85, // 85% of CV speed (fastest for this zone)
+/**
+ * Zone System Definitions
+ * Multiple methodologies for calculating training zones
+ */
+export const ZONE_SYSTEMS = {
+  OFFSET_BASED: {
+    id: "offset-based",
+    name: "Offset-Based",
+    description:
+      "Hybrid zone system using percentage-based Z1-Z4 lower bounds and fixed time offsets for Z4-Z5 upper bounds",
+    zones: [
+      {
+        number: 1,
+        name: "Recovery / Easy",
+        speedMin: 0.7, // 70% of CV speed (slowest for this zone)
+        speedMax: 0.85, // 85% of CV speed (fastest for this zone)
+      },
+      {
+        number: 2,
+        name: "Steady State",
+        speedMin: 0.85,
+        speedMax: 0.9,
+      },
+      {
+        number: 3,
+        name: "Tempo",
+        speedMin: 0.9,
+        speedMax: 0.97,
+      },
+      {
+        number: 4,
+        name: "Threshold",
+        speedMin: 0.97,
+        speedMax: null, // Calculated as CV pace - 10 seconds
+        useFixedTimeOffset: true,
+        timeOffsetSeconds: -10, // CV pace - 10 seconds
+      },
+      {
+        number: 5,
+        name: "VO₂ Max",
+        speedMin: null, // Calculated as CV pace - 10 seconds (same as Z4 upper)
+        speedMax: null, // Calculated as CV pace - 20 seconds
+        useFixedTimeOffset: true,
+        timeOffsetSecondsMin: -10, // Z5 lower = CV pace - 10 seconds
+        timeOffsetSecondsMax: -20, // Z5 upper = CV pace - 20 seconds
+      },
+    ],
+    notes: [
+      "Hybrid methodology: percentage-based lower bounds, fixed time offsets for upper bounds",
+      "Z1-Z4 lower bounds: Percentage-based (70%, 85%, 90%, 97% of CV)",
+      "Z4 upper / Z5 lower: CV pace - 10 seconds (fixed time offset)",
+      "Z5 upper: CV pace - 20 seconds (fixed time offset)",
+      "Source: Front Runner Sports pace zone calculator methodology (Lange & Pöhlitz framework)",
+    ],
   },
-  {
-    number: 2,
-    name: "Steady State",
-    speedMin: 0.85,
-    speedMax: 0.905,
+  RACE_PREDICTION_BASED: {
+    id: "race-prediction-based",
+    name: "Race Prediction-Based",
+    description:
+      "Hybrid zone system using percentage-based Z1-Z3 and race prediction-based Z4-Z5",
+    requiresRacePrediction: true,
+    racePredictionMethod: "riegel",
+    fatigueFactor: 1.06,
+    zones: [
+      {
+        number: 1,
+        name: "Recovery / Easy",
+        speedMin: 0.7,
+        speedMax: 0.85,
+      },
+      {
+        number: 2,
+        name: "Steady State",
+        speedMin: 0.85,
+        speedMax: 0.9,
+      },
+      {
+        number: 3,
+        name: "Tempo",
+        speedMin: 0.9,
+        speedMax: 0.97,
+      },
+      {
+        number: 4,
+        name: "Threshold (TL)",
+        description: "Tempolauf - Competition-specific endurance (5K-10K race pace)",
+        speedMin: 0.97,
+        speedMax: 1.0,
+        // Note: Z4 bounds are calculated from 10K (lower) and 5K (upper) race predictions
+      },
+      {
+        number: 5,
+        name: "VO₂ Max (WSA)",
+        description: "Wettkampfspezifische Ausdauer - Max oxygen uptake (1500m-3K race pace)",
+        speedMin: 1.04,
+        speedMax: 1.09,
+        // Note: Z5 bounds are calculated from 3K (lower) and 1500m (upper) race predictions
+      },
+    ],
+    notes: [
+      "Uses Riegel Power Law for race-based Z4-Z5 calculation (non-linear scaling)",
+      "Z1-Z3: Calculated as percentages of CV (70-85%, 85-90%, 90-97%)",
+      "Z4: Anchored to 10K pace (lower) → 5K pace (upper) using Riegel predictions",
+      "Z5: Anchored to 3K pace (lower) → 1500m pace (upper) using Riegel predictions",
+      "High-intensity zones scale non-linearly with performance level",
+      "Source: Original Lange & Pöhlitz methodology (1995, updated 2014)",
+    ],
   },
-  {
-    number: 3,
-    name: "Tempo",
-    speedMin: 0.905,
-    speedMax: 0.9725,
-  },
-  {
-    number: 4,
-    name: "Threshold",
-    speedMin: 0.9725,
-    speedMax: 1.03,
-  },
-  {
-    number: 5,
-    name: "VO₂ Max",
-    speedMin: 1.03,
-    speedMax: 1.06,
-  },
-];
+};
+
+/**
+ * Default zone system
+ */
+export const DEFAULT_ZONE_SYSTEM = ZONE_SYSTEMS.OFFSET_BASED.id;
+
+/**
+ * Legacy export for backward compatibility
+ * @deprecated Use ZONE_SYSTEMS.OFFSET_BASED.zones instead
+ */
+export const ZONE_DEFINITION = ZONE_SYSTEMS.OFFSET_BASED.zones;
 
 export const UNIT_SYSTEMS = {
   METRIC: "metric",

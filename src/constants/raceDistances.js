@@ -26,7 +26,7 @@ export const RACE_DISTANCES = {
     id: "1500m",
     name: "1500m",
     distanceMeters: 1500,
-    typical: false,
+    typical: true,
   },
   MILE: {
     id: "mile",
@@ -62,7 +62,7 @@ export const RACE_DISTANCES = {
     id: "30k",
     name: "30K",
     distanceMeters: 30000,
-    typical: false,
+    typical: true,
   },
   MARATHON: {
     id: "marathon",

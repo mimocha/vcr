@@ -41,9 +41,6 @@ export default function CVDisplay({
       ? pace_sec_per_km_raw * 1.60934
       : undefined;
 
-  // Check if this is a test with raw/adjusted values (30-min or Cooper)
-  const hasRawValues = velocity_ms_raw !== undefined;
-
   return (
     <Card>
       {/* Title with Toggle */}
