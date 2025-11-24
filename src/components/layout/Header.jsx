@@ -29,7 +29,7 @@ export default function Header({ unitSystem, onUnitSystemChange }) {
         <div className="flex items-center gap-2">
           <div
             className={`
-              flex items-center gap-2 rounded-xl p-1 backdrop-blur-xl border transition-all
+              relative flex items-center gap-2 rounded-xl p-1 backdrop-blur-xl border transition-all
               ${
                 isDark
                   ? "bg-white/[0.08] border-white/30 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
@@ -41,18 +41,34 @@ export default function Header({ unitSystem, onUnitSystemChange }) {
               WebkitBackdropFilter: "blur(16px) saturate(180%)",
             }}
           >
+            {/* Sliding background indicator */}
+            <div
+              className={`
+                absolute top-1 bottom-1 rounded-lg transition-all duration-300 ease-in-out
+                ${
+                  isDark
+                    ? "bg-gradient-to-r from-cyan-600/80 via-blue-500/80 to-indigo-600/80"
+                    : "bg-gradient-to-r from-cyan-600/80 via-blue-600/80 to-indigo-600/80"
+                }
+              `}
+              style={{
+                width: "calc(50% - 4px)",
+                transform:
+                  unitSystem === UNIT_SYSTEMS.METRIC
+                    ? "translateX(0)"
+                    : "translateX(100%)",
+              }}
+            />
             <button
               onClick={() => onUnitSystemChange(UNIT_SYSTEMS.METRIC)}
               className={`
-                px-4 py-2 rounded-lg font-medium transition-all
+                relative z-10 flex-1 px-4 py-2 rounded-lg font-medium transition-all text-center
                 ${
                   unitSystem === UNIT_SYSTEMS.METRIC
-                    ? isDark
-                      ? "bg-gradient-to-r from-cyan-600/80 via-blue-500/80 to-indigo-600/80 text-white"
-                      : "bg-gradient-to-r from-cyan-600/80 via-blue-600/80 to-indigo-600/80 text-white"
+                    ? "text-white"
                     : isDark
-                    ? "bg-transparent text-gray-300 hover:bg-white/10"
-                    : "bg-transparent text-gray-600 hover:bg-gray-100"
+                    ? "text-gray-300 hover:bg-white/10"
+                    : "text-gray-600 hover:bg-gray-100"
                 }
               `}
             >
@@ -61,15 +77,13 @@ export default function Header({ unitSystem, onUnitSystemChange }) {
             <button
               onClick={() => onUnitSystemChange(UNIT_SYSTEMS.IMPERIAL)}
               className={`
-                px-4 py-2 rounded-lg font-medium transition-all
+                relative z-10 flex-1 px-4 py-2 rounded-lg font-medium transition-all text-center
                 ${
                   unitSystem === UNIT_SYSTEMS.IMPERIAL
-                    ? isDark
-                      ? "bg-gradient-to-r from-cyan-600/80 via-blue-500/80 to-indigo-600/80 text-white"
-                      : "bg-gradient-to-r from-cyan-600/80 via-blue-600/80 to-indigo-600/80 text-white"
+                    ? "text-white"
                     : isDark
-                    ? "bg-transparent text-gray-300 hover:bg-white/10"
-                    : "bg-transparent text-gray-600 hover:bg-gray-100"
+                    ? "text-gray-300 hover:bg-white/10"
+                    : "text-gray-600 hover:bg-gray-100"
                 }
               `}
             >

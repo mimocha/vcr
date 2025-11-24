@@ -14,7 +14,6 @@ export default function Input({
   placeholder,
   error,
   note,
-  unit,
   required = false,
   inputRef,
   onKeyDown,
@@ -59,7 +58,6 @@ export default function Input({
                 ? "border-white/[0.15] focus:ring-blue-400 focus:border-blue-400 bg-white/[0.30] text-gray-900 placeholder-gray-600"
                 : "border-white/40 focus:ring-blue-500 focus:border-blue-500 bg-white/60"
             }
-            ${unit ? "pr-16" : ""}
           `}
           style={{
             backdropFilter: "blur(12px) saturate(150%)",
@@ -71,18 +69,6 @@ export default function Input({
           }
           {...props}
         />
-
-        {unit && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <span
-              className={`text-sm ${
-                isDark ? "text-gray-600" : "text-gray-500"
-              }`}
-            >
-              {unit}
-            </span>
-          </div>
-        )}
       </div>
 
       {hasError && (
@@ -97,7 +83,7 @@ export default function Input({
       {!hasError && note && (
         <p
           id={`${id}-note`}
-          className={`mt-1 text-sm ${
+          className={`mt-1 text-xs ${
             isDark ? "text-gray-400" : "text-gray-600"
           }`}
         >

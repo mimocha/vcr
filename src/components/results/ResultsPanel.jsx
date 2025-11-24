@@ -7,16 +7,16 @@ import CVDisplay from "./CVDisplay";
 import ZonesTable from "./ZonesTable";
 import RacePerformanceChart from "./RacePerformanceChart";
 
-export default function ResultsPanel({ cvData, zones, unitSystem }) {
+export default function ResultsPanel({ cvData, zones, unitSystem, cvMode, onCvModeChange }) {
   if (!cvData || !zones) {
     return null;
   }
 
   return (
     <div id="results" className="space-y-6 animate-fade-in">
-      <ZonesTable zones={zones} unitSystem={unitSystem} />
-      <CVDisplay cvData={cvData} unitSystem={unitSystem} />
-      <RacePerformanceChart cvData={cvData} unitSystem={unitSystem} />
+      <ZonesTable zones={zones} unitSystem={unitSystem} cvMode={cvMode} />
+      <CVDisplay cvData={cvData} unitSystem={unitSystem} cvMode={cvMode} onCvModeChange={onCvModeChange} />
+      <RacePerformanceChart cvData={cvData} unitSystem={unitSystem} cvMode={cvMode} />
     </div>
   );
 }

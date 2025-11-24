@@ -11,6 +11,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 export default function ZonesTable({
   zones,
   unitSystem = UNIT_SYSTEMS.METRIC,
+  cvMode = "raw",
 }) {
   const { isDark } = useTheme();
 
@@ -22,6 +23,15 @@ export default function ZonesTable({
 
   return (
     <Card title="Your Training Zones">
+      {/* Explanatory note */}
+      <p
+        className={`text-xs mb-4 ${isDark ? "text-gray-400" : "text-gray-600"}`}
+      >
+        Using training zones based on{" "}
+        <strong>{cvMode === "raw" ? "unadjusted" : "adjusted"}</strong> critical
+        velocity
+      </p>
+
       <div className="space-y-2.5">
         {zones.map((zone) => {
           const zoneColors = ZONE_COLORS[zone.number];
@@ -45,13 +55,13 @@ export default function ZonesTable({
                   className={`
                     rounded-full px-4 py-2
                     font-semibold text-sm text-center
-                    backdrop-blur-lg
+                    backdrop-blur-xl
                     ${isDark ? zoneColors.pillDark : zoneColors.pillLight}
                     ${zoneColors.pillText}
                     ${
                       isDark
                         ? "border border-white/20 bg-opacity-90"
-                        : "border border-white/50 bg-opacity-95"
+                        : "border border-white/50 bg-opacity-90"
                     }
                   `}
                 >

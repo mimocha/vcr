@@ -26,25 +26,16 @@ export default function TestSelector({ value, onChange }) {
       />
 
       {value && TEST_CONFIGS[value] && (
-        <div
-          className={`
-          mt-2 p-3 rounded-2xl backdrop-blur-md transition-all
-          ${
-            isDark
-              ? "bg-white/10 border border-white/20"
-              : "bg-white/60 border border-white/40"
-          }
-        `}
-        >
-          <p
-            className={`text-sm ${isDark ? "text-gray-200" : "text-gray-800"}`}
-          >
-            <strong>{TEST_CONFIGS[value].name}:</strong>{" "}
+        <div className="mt-1.5">
+          <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+            <strong className={isDark ? "text-gray-300" : "text-gray-700"}>
+              {TEST_CONFIGS[value].name}:
+            </strong>{" "}
             {TEST_CONFIGS[value].description}
           </p>
           {TEST_CONFIGS[value].recommended && (
             <p
-              className={`text-xs mt-1 ${
+              className={`text-xs mt-0.5 ${
                 isDark ? "text-blue-400" : "text-blue-600"
               }`}
             >

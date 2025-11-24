@@ -14,7 +14,6 @@ import {
   calculateCV2Point,
 } from "./utils/calculations/cvCalculators";
 import { calculateTrainingZones } from "./utils/calculations/zoneCalculators";
-import { milesToMeters } from "./utils/calculations/paceConversions";
 import { validateDistance, validate2PointTest } from "./utils/validators";
 
 import { DEFAULT_TEST_TYPE, TEST_TYPES } from "./constants/testTypes";
@@ -26,6 +25,7 @@ function App() {
   // State management
   const [testType, setTestType] = useState(DEFAULT_TEST_TYPE);
   const [unitSystem, setUnitSystem] = useState(UNIT_SYSTEMS.METRIC);
+  const [cvMode, setCvMode] = useState('raw'); // 'raw' or 'adjusted'
   const [inputValues, setInputValues] = useState({});
   const [errors, setErrors] = useState({});
   const [cvData, setCvData] = useState(null);
@@ -38,6 +38,15 @@ function App() {
     setCvData(null);
     setZones(null);
   }, [testType]);
+
+  // Recalculate zones when CV mode changes
+  useEffect(() => {
+    if (cvData) {
+      const selectedVelocity = cvMode === 'raw' ? cvData.velocity_ms_raw : cvData.velocity_ms;
+      const trainingZones = calculateTrainingZones(selectedVelocity);
+      setZones(trainingZones);
+    }
+  }, [cvMode, cvData]);
 
   // Handle input changes
   const handleInputChange = (inputId, value) => {
@@ -56,16 +65,6 @@ function App() {
     }
   };
 
-  // Convert input values to meters if using imperial
-  const getDistanceInMeters = (value) => {
-    if (!value || value === "") return null;
-    const numValue = Number(value);
-    if (isNaN(numValue)) return null;
-    return unitSystem === UNIT_SYSTEMS.IMPERIAL
-      ? milesToMeters(numValue)
-      : numValue;
-  };
-
   // Validate and calculate
   const handleCalculate = () => {
     const newErrors = {};
@@ -73,7 +72,7 @@ function App() {
     try {
       if (testType === TEST_TYPES.THIRTY_MIN) {
         // Validate 30min test
-        const distanceMeters = getDistanceInMeters(inputValues.distance);
+        const distanceMeters = parseFloat(inputValues.distance);
         const validation = validateDistance(distanceMeters, {
           min: 1000,
           max: 12000,
@@ -102,7 +101,7 @@ function App() {
         }, 100);
       } else if (testType === TEST_TYPES.COOPER) {
         // Validate Cooper test
-        const distanceMeters = getDistanceInMeters(inputValues.distance);
+        const distanceMeters = parseFloat(inputValues.distance);
         const validation = validateDistance(distanceMeters, {
           min: 100,
           max: 5000,
@@ -131,9 +130,9 @@ function App() {
         }, 100);
       } else if (testType === TEST_TYPES.TWO_POINT) {
         // Validate 2-point test
-        const distance1Meters = getDistanceInMeters(inputValues.distance1);
+        const distance1Meters = parseFloat(inputValues.distance1);
         const time1 = Number(inputValues.time1);
-        const distance2Meters = getDistanceInMeters(inputValues.distance2);
+        const distance2Meters = parseFloat(inputValues.distance2);
         const time2 = Number(inputValues.time2);
 
         const validation = validate2PointTest(
@@ -249,6 +248,8 @@ function App() {
               cvData={cvData}
               zones={zones}
               unitSystem={unitSystem}
+              cvMode={cvMode}
+              onCvModeChange={setCvMode}
             />
           )}
         </div>

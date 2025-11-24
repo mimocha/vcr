@@ -16,6 +16,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 export default function RacePerformanceChart({
   cvData,
   unitSystem = UNIT_SYSTEMS.METRIC,
+  cvMode = 'raw',
 }) {
   const { isDark } = useTheme();
 
@@ -23,11 +24,14 @@ export default function RacePerformanceChart({
     return null;
   }
 
-  const { velocity_ms, d_prime, d_prime_estimated } = cvData;
+  const { velocity_ms, velocity_ms_raw, d_prime, d_prime_estimated } = cvData;
+
+  // Use the selected CV velocity based on cvMode
+  const selectedVelocity = cvMode === 'raw' ? velocity_ms_raw : velocity_ms;
 
   // Predict all standard race distances
   const racePredictions = predictAllRaces(
-    velocity_ms,
+    selectedVelocity,
     d_prime,
     d_prime_estimated,
     true // Only show typical race distances
@@ -91,6 +95,17 @@ export default function RacePerformanceChart({
 
   return (
     <Card title="Race Performance Predictions">
+      {/* Explanatory note */}
+      <p
+        className={`text-xs mb-4 ${
+          isDark ? "text-gray-400" : "text-gray-600"
+        }`}
+      >
+        Predictions based on{" "}
+        <strong>{cvMode === 'raw' ? 'unadjusted' : 'adjusted'}</strong> critical
+        velocity
+      </p>
+
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -180,11 +195,16 @@ export default function RacePerformanceChart({
             isDark ? "text-amber-100" : "text-amber-900"
           }`}
         >
+          <li>
+            • Predictions use{" "}
+            <strong>{cvMode === 'raw' ? 'unadjusted (raw)' : 'adjusted'}</strong>{" "}
+            critical velocity{cvMode === 'raw' ? ' (includes anaerobic contribution)' : ' (accounts for anaerobic capacity)'}
+          </li>
           {d_prime_estimated && (
             <>
               <li>
-                • Predictions use estimated D&apos; ({d_prime.toFixed(0)}m)
-                ±100m confidence interval
+                • D&apos; is estimated ({d_prime.toFixed(0)}m)
+                with ±100m confidence interval
               </li>
               <li>
                 • For higher accuracy, use the 2-Point Test to measure D&apos;
@@ -194,7 +214,7 @@ export default function RacePerformanceChart({
           )}
           {!d_prime_estimated && (
             <li>
-              • Predictions based on measured D&apos; ({d_prime.toFixed(0)}m)
+              • D&apos; is measured ({d_prime.toFixed(0)}m)
               from your 2-Point Test
             </li>
           )}
