@@ -88,6 +88,52 @@ export function predictRaceTimeWithConfidence(
 }
 
 /**
+ * Predict race time using Riegel Power Law
+ * Formula: T2 = T1 × (D2/D1)^k where k is fatigue factor
+ *
+ * This model is more accurate for shorter race distances compared to
+ * the hyperbolic model, particularly for distances from 1500m to 10000m.
+ * Used in Race Prediction-Based zone system for defining high-intensity training zones.
+ * Source: Original Lange & Pöhlitz (1995) methodology
+ *
+ * @param {number} cvVelocityMs - Critical Velocity in m/s
+ * @param {number} dPrime - Anaerobic distance capacity in meters
+ * @param {number} targetDistanceMeters - Target race distance in meters
+ * @param {number} fatigueFactor - Fatigue coefficient (default: 1.06, range: 1.06-1.08)
+ * @returns {object} Predicted time and pace data
+ */
+export function predictRaceTimeRiegel(
+  cvVelocityMs,
+  dPrime,
+  targetDistanceMeters,
+  fatigueFactor = 1.06
+) {
+  if (cvVelocityMs <= 0 || dPrime < 0 || targetDistanceMeters <= 0) {
+    throw new Error("Invalid input values");
+  }
+
+  // Reference: Use 30-minute test as baseline (1800 seconds)
+  const referenceTimeSeconds = 1800;
+  const referenceDistanceMeters = cvVelocityMs * referenceTimeSeconds + dPrime;
+
+  // Apply Riegel Power Law: T2 = T1 × (D2/D1)^k
+  const predictedTimeSeconds =
+    referenceTimeSeconds *
+    Math.pow(targetDistanceMeters / referenceDistanceMeters, fatigueFactor);
+
+  // Calculate average pace
+  const paceSecPerKm = predictedTimeSeconds / (targetDistanceMeters / 1000);
+  const paceSecPerMile = paceSecPerKm * 1.60934;
+
+  return {
+    timeSeconds: predictedTimeSeconds,
+    paceSecPerKm,
+    paceSecPerMile,
+    distanceMeters: targetDistanceMeters,
+  };
+}
+
+/**
  * Predict all standard race distances
  *
  * @param {number} criticalSpeed - Critical Speed in m/s

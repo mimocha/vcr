@@ -4,7 +4,13 @@
  */
 
 import Card from "../ui/Card";
-import { UNIT_SYSTEMS, ZONE_COLORS } from "../../constants/zoneDefinitions";
+import Select from "../ui/Select";
+import {
+  UNIT_SYSTEMS,
+  ZONE_COLORS,
+  ZONE_SYSTEMS,
+  DEFAULT_ZONE_SYSTEM,
+} from "../../constants/zoneDefinitions";
 import { formatPaceRange } from "../../utils/formatters";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -12,6 +18,8 @@ export default function ZonesTable({
   zones,
   unitSystem = UNIT_SYSTEMS.METRIC,
   cvMode = "raw",
+  zoneSystem = DEFAULT_ZONE_SYSTEM,
+  onZoneSystemChange,
 }) {
   const { isDark } = useTheme();
 
@@ -20,6 +28,17 @@ export default function ZonesTable({
   }
 
   const isMetric = unitSystem === UNIT_SYSTEMS.METRIC;
+
+  // Get current zone system metadata
+  const currentSystem = Object.values(ZONE_SYSTEMS).find(
+    (sys) => sys.id === zoneSystem
+  );
+
+  // Prepare options for Select component
+  const zoneSystemOptions = Object.values(ZONE_SYSTEMS).map((sys) => ({
+    value: sys.id,
+    label: sys.name,
+  }));
 
   return (
     <Card title="Your Training Zones">
@@ -32,6 +51,7 @@ export default function ZonesTable({
         velocity
       </p>
 
+      {/* Training Zone Cards */}
       <div className="space-y-2.5">
         {zones.map((zone) => {
           const zoneColors = ZONE_COLORS[zone.number];
@@ -87,6 +107,46 @@ export default function ZonesTable({
             </div>
           );
         })}
+      </div>
+
+      {/* Zone System Selector */}
+      <div className="my-4">
+        <Select
+          id="zone-system"
+          label="Zone Calculation Method"
+          value={zoneSystem}
+          onChange={(e) => onZoneSystemChange(e.target.value)}
+          options={zoneSystemOptions}
+        />
+      </div>
+
+      {/* Dynamic notes card */}
+      <div
+        className={`
+          my-4 p-3 rounded-xl backdrop-blur-sm border
+          ${
+            isDark
+              ? "bg-blue-500/10 border-blue-400/30"
+              : "bg-blue-50/80 border-blue-200"
+          }
+        `}
+      >
+        <p
+          className={`text-sm font-semibold ${
+            isDark ? "text-blue-200" : "text-blue-800"
+          }`}
+        >
+          About this zone system:
+        </p>
+        <ul
+          className={`text-xs mt-2 space-y-1 ${
+            isDark ? "text-blue-100" : "text-blue-900"
+          }`}
+        >
+          {currentSystem?.notes.map((note, index) => (
+            <li key={index}>• {note}</li>
+          ))}
+        </ul>
       </div>
     </Card>
   );

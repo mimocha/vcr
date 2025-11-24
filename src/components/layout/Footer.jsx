@@ -12,7 +12,7 @@ export default function Footer() {
     <footer className={`mt-12 pt-6 border-t ${isDark ? 'border-white/20' : 'border-gray-200'}`}>
       <div className={`text-center text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
         <p>
-          Based on Tom Schwartz (Tinman) CV methodology and{' '}
+          Based on Tom Schwartz (Tinman) CV methodology and zone systems adapted from{' '}
           <a
             href="https://frontrunnersports.com.au/runningsquads/pacezonecalculator/"
             target="_blank"
@@ -25,7 +25,7 @@ export default function Footer() {
           >
             Front Runner Sports
           </a>{' '}
-          zone system
+          (Lange & Pöhlitz framework)
         </p>
         <p className="mt-2">
           <a
