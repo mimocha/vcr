@@ -1,6 +1,12 @@
 /**
  * Training Zone Calculators
- * Based on CV-based 5-zone system (Lange & Pöhlitz methodology)
+ *
+ * Current implementation uses Front Runner Sports zone percentages
+ * (https://frontrunnersports.com.au/runningsquads/pacezonecalculator/)
+ * which applies the general methodology framework by Lange & Pöhlitz (1995, updated 2014).
+ *
+ * Note: Planned to be refactored to support multiple zone calculation methodologies.
+ *
  * Reference: docs/zones.md
  */
 

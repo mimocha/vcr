@@ -5,7 +5,7 @@
 
 import { useTheme, THEME_MODES } from "../../contexts/ThemeContext";
 
-const ThemeIcon = ({ mode, isDark }) => {
+const ThemeIcon = ({ mode }) => {
   if (mode === THEME_MODES.LIGHT) {
     return (
       <svg
@@ -66,7 +66,7 @@ export default function ThemeToggle() {
       aria-label="Toggle theme"
       title="Toggle theme"
     >
-      <ThemeIcon mode={themeMode} isDark={isDark} />
+      <ThemeIcon mode={themeMode} />
     </button>
   );
 }

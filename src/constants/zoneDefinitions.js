@@ -1,5 +1,13 @@
 /**
  * Training Zone System Definitions
+ *
+ * Current implementation uses zone percentages from Front Runner Sports
+ * pace zone calculator (https://frontrunnersports.com.au/runningsquads/pacezonecalculator/)
+ * which applies the general methodology framework by Lange, G. & Pöhlitz, L. (1995, updated 2014).
+ *
+ * Note: This is planned to be refactored to support multiple zone calculation methodologies.
+ * Alternative zone systems are documented in docs/sources/ for future implementation.
+ *
  * Reference: docs/zones.md
  */
 
@@ -14,8 +22,8 @@ export const ZONE_COLORS = {
     glowColor: "blue",
     pill: "bg-blue-500",
     pillText: "text-white",
-    pillLight: "bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600",
-    pillDark: "bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600",
+    pillLight: "bg-blue-600",
+    pillDark: "bg-blue-800",
   },
   2: {
     bg: "bg-green-50",
@@ -27,8 +35,8 @@ export const ZONE_COLORS = {
     glowColor: "green",
     pill: "bg-green-500",
     pillText: "text-white",
-    pillLight: "bg-gradient-to-br from-green-400 via-green-500 to-emerald-600",
-    pillDark: "bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600",
+    pillLight: "bg-green-600",
+    pillDark: "bg-emerald-800",
   },
   3: {
     bg: "bg-yellow-50",
@@ -40,8 +48,8 @@ export const ZONE_COLORS = {
     glowColor: "yellow",
     pill: "bg-yellow-500",
     pillText: "text-white",
-    pillLight: "bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500",
-    pillDark: "bg-gradient-to-br from-yellow-500 via-amber-600 to-orange-600",
+    pillLight: "bg-amber-500",
+    pillDark: "bg-amber-700",
   },
   4: {
     bg: "bg-orange-50",
@@ -53,8 +61,8 @@ export const ZONE_COLORS = {
     glowColor: "orange",
     pill: "bg-orange-500",
     pillText: "text-white",
-    pillLight: "bg-gradient-to-br from-orange-400 via-orange-500 to-red-500",
-    pillDark: "bg-gradient-to-br from-orange-500 via-orange-600 to-red-600",
+    pillLight: "bg-orange-600",
+    pillDark: "bg-orange-800",
   },
   5: {
     bg: "bg-red-50",
@@ -66,8 +74,8 @@ export const ZONE_COLORS = {
     glowColor: "red",
     pill: "bg-red-500",
     pillText: "text-white",
-    pillLight: "bg-gradient-to-br from-red-400 via-red-500 to-rose-600",
-    pillDark: "bg-gradient-to-br from-red-500 via-rose-600 to-pink-600",
+    pillLight: "bg-red-600",
+    pillDark: "bg-rose-800",
   },
 };
 

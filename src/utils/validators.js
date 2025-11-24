@@ -53,7 +53,7 @@ export function validateDistance(distance, options = {}) {
  * @param {number} options.max - Maximum time in seconds (default: 7200)
  * @returns {object} { valid: boolean, error: string|null }
  */
-export function validateTime(time, options = {}) {
+function validateTime(time, options = {}) {
   const { min = 60, max = 7200 } = options;
 
   if (time === null || time === undefined || time === "") {
@@ -130,56 +130,13 @@ export function validate2PointTest(distance1, time1, distance2, time2) {
     }
 
     if (num1 >= num2) {
-      errors.distance2 = "Second test distance should be greater than first test distance";
+      errors.distance2 =
+        "Second test distance should be greater than first test distance";
     }
   }
 
   return {
     valid: Object.keys(errors).length === 0,
     errors,
-  };
-}
-
-/**
- * Check if distance is realistic for given test duration
- *
- * @param {number} distance - Distance in meters
- * @param {number} duration - Duration in seconds
- * @returns {object} { realistic: boolean, warning: string|null }
- */
-export function checkRealisticPace(distance, duration) {
-  const velocity = distance / duration;
-  const paceSecPerKm = 1000 / velocity;
-
-  // World record marathon pace is about 2:52/km (172 sec/km)
-  // Very slow pace is about 10:00/km (600 sec/km)
-  const MIN_REALISTIC_PACE = 150; // ~2:30/km (world-class)
-  const MAX_REALISTIC_PACE = 720; // ~12:00/km (very slow)
-
-  if (paceSecPerKm < MIN_REALISTIC_PACE) {
-    return {
-      realistic: false,
-      warning: `This pace (${Math.floor(paceSecPerKm / 60)}:${Math.floor(
-        paceSecPerKm % 60
-      )
-        .toString()
-        .padStart(2, "0")}/km) is faster than world records. Please verify your input.`,
-    };
-  }
-
-  if (paceSecPerKm > MAX_REALISTIC_PACE) {
-    return {
-      realistic: false,
-      warning: `This pace (${Math.floor(paceSecPerKm / 60)}:${Math.floor(
-        paceSecPerKm % 60
-      )
-        .toString()
-        .padStart(2, "0")}/km) is very slow. Please verify your input.`,
-    };
-  }
-
-  return {
-    realistic: true,
-    warning: null,
   };
 }

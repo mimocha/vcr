@@ -4,30 +4,53 @@
  * Reference: docs/formulas.md
  */
 
+import { D_PRIME_ESTIMATES } from "../../constants/raceDistances";
+
 /**
  * Calculate Critical Velocity from 30-minute test distance
  *
  * @param {number} distance - Distance covered in 30 minutes (meters)
+ * @param {number} customDPrime - Optional custom D' value (meters)
  * @returns {object} CV velocity and pace data
  */
-export function calculateCV30min(distance) {
+export function calculateCV30min(distance, customDPrime = null) {
   if (distance <= 0 || !isFinite(distance)) {
     throw new Error("Distance must be a positive number");
   }
 
   const TEST_DURATION = 1800; // 30 minutes in seconds
 
-  // Critical Velocity in m/s
-  const velocity_ms = distance / TEST_DURATION;
+  // Estimate D' for single-point test (or use custom value)
+  const d_prime = customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
+  const d_prime_estimated = customDPrime === null;
 
-  // Pace in seconds per kilometer
+  // Raw (unadjusted) Critical Velocity in m/s
+  const velocity_ms_raw = distance / TEST_DURATION;
+
+  // Raw pace in seconds per kilometer
+  const pace_sec_per_km_raw = 1000 / velocity_ms_raw;
+
+  // Adjusted distance (removing D' contribution)
+  const adjusted_distance = distance - d_prime;
+
+  // Adjusted Critical Velocity in m/s
+  // For 30-min test: CV = (Distance - D') / 1800
+  // This gives us the "true" CS by removing the anaerobic contribution
+  const velocity_ms = adjusted_distance / TEST_DURATION;
+
+  // Adjusted pace in seconds per kilometer
   const pace_sec_per_km = 1000 / velocity_ms;
 
   return {
     velocity_ms,
     pace_sec_per_km,
+    velocity_ms_raw,
+    pace_sec_per_km_raw,
+    adjusted_distance,
     distance,
     duration: TEST_DURATION,
+    d_prime,
+    d_prime_estimated,
   };
 }
 
@@ -35,26 +58,46 @@ export function calculateCV30min(distance) {
  * Calculate Critical Velocity from Cooper 12-minute test
  *
  * @param {number} distance - Distance covered in 12 minutes (meters)
+ * @param {number} customDPrime - Optional custom D' value (meters)
  * @returns {object} CV velocity and pace data
  */
-export function calculateCVCooper(distance) {
+export function calculateCVCooper(distance, customDPrime = null) {
   if (distance <= 0 || !isFinite(distance)) {
     throw new Error("Distance must be a positive number");
   }
 
   const TEST_DURATION = 720; // 12 minutes in seconds
 
-  // Critical Velocity in m/s
-  const velocity_ms = distance / TEST_DURATION;
+  // Estimate D' for single-point test (or use custom value)
+  const d_prime = customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
+  const d_prime_estimated = customDPrime === null;
 
-  // Pace in seconds per kilometer
+  // Raw (unadjusted) Critical Velocity in m/s
+  const velocity_ms_raw = distance / TEST_DURATION;
+
+  // Raw pace in seconds per kilometer
+  const pace_sec_per_km_raw = 1000 / velocity_ms_raw;
+
+  // Adjusted distance (removing D' contribution)
+  const adjusted_distance = distance - d_prime;
+
+  // Adjusted Critical Velocity in m/s
+  // For Cooper test: CV = (Distance - D') / 720
+  const velocity_ms = adjusted_distance / TEST_DURATION;
+
+  // Adjusted pace in seconds per kilometer
   const pace_sec_per_km = 1000 / velocity_ms;
 
   return {
     velocity_ms,
     pace_sec_per_km,
+    velocity_ms_raw,
+    pace_sec_per_km_raw,
+    adjusted_distance,
     distance,
     duration: TEST_DURATION,
+    d_prime,
+    d_prime_estimated,
   };
 }
 
@@ -65,7 +108,7 @@ export function calculateCVCooper(distance) {
  * @param {number} time1 - First test duration (seconds)
  * @param {number} distance2 - Second test distance (meters, longer)
  * @param {number} time2 - Second test duration (seconds)
- * @returns {object} CV, D', and pace data
+ * @returns {object} CV, D', and pace data (includes both raw and adjusted values)
  */
 export function calculateCV2Point(distance1, time1, distance2, time2) {
   // Input validation
@@ -82,19 +125,38 @@ export function calculateCV2Point(distance1, time1, distance2, time2) {
     throw new Error("Second test distance should be greater than first test distance");
   }
 
-  // Critical Velocity in m/s
+  // Critical Velocity in m/s (adjusted - true CV from 2-point method)
   const velocity_ms = (distance2 - distance1) / (time2 - time1);
 
   // Anaerobic Distance Capacity (D') in meters
   const d_prime = (distance1 * time2 - distance2 * time1) / (time2 - time1);
 
-  // Pace in seconds per kilometer
+  // Pace in seconds per kilometer (adjusted)
   const pace_sec_per_km = 1000 / velocity_ms;
+
+  // Raw (unadjusted) Critical Velocity - average of both test velocities
+  // Each individual test includes D' contribution: d = CV*t + D'
+  // So raw velocity = d/t includes both aerobic and anaerobic contributions
+  const velocity1_raw = distance1 / time1;
+  const velocity2_raw = distance2 / time2;
+  const velocity_ms_raw = (velocity1_raw + velocity2_raw) / 2;
+
+  // Raw pace in seconds per kilometer
+  const pace_sec_per_km_raw = 1000 / velocity_ms_raw;
+
+  // Calculate adjusted distances (what would have been covered without D')
+  const adjusted_distance1 = distance1 - d_prime;
+  const adjusted_distance2 = distance2 - d_prime;
+  const adjusted_distance = (adjusted_distance1 + adjusted_distance2) / 2;
 
   return {
     velocity_ms,
     d_prime,
+    d_prime_estimated: false, // D' is directly calculated, not estimated
     pace_sec_per_km,
+    velocity_ms_raw,
+    pace_sec_per_km_raw,
+    adjusted_distance,
     distance1,
     time1,
     distance2,

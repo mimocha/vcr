@@ -51,32 +51,23 @@ export default function TestInput({
 
   return (
     <div className="space-y-4">
-      {config.inputs.map((input, index) => {
-        const isDistanceInput = input.id.includes("distance");
-        const unit = isDistanceInput
-          ? unitSystem === UNIT_SYSTEMS.METRIC
-            ? input.unit
-            : input.unitImperial
-          : input.unit;
-
-        return (
-          <Input
-            key={input.id}
-            id={input.id}
-            label={input.label}
-            type={input.type}
-            value={values[input.id] || ""}
-            onChange={handleChange(input.id)}
-            onKeyDown={handleKeyDown(input.id, index)}
-            placeholder={input.placeholder}
-            unit={unit}
-            error={errors[input.id]}
-            note={input.note}
-            required={input.required}
-            inputRef={(el) => (inputRefs.current[input.id] = el)}
-          />
-        );
-      })}
+      {config.inputs.map((input, index) => (
+        <Input
+          key={input.id}
+          id={input.id}
+          label={input.label}
+          type={input.type}
+          value={values[input.id] || ""}
+          onChange={handleChange(input.id)}
+          onKeyDown={handleKeyDown(input.id, index)}
+          placeholder={input.placeholder}
+          unit={input.unit}
+          error={errors[input.id]}
+          note={input.note}
+          required={input.required}
+          inputRef={(el) => (inputRefs.current[input.id] = el)}
+        />
+      ))}
     </div>
   );
 }

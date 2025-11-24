@@ -4,13 +4,15 @@
 
 This document defines the CV-based 5-zone training system used in the VCR Calculator. These zones are derived from Critical Velocity testing and help runners train at appropriate intensities for different physiological adaptations.
 
-**Last Updated:** 2025-11-23
+**Last Updated:** 2025-11-24
+
+> **Note:** The current zone percentage definitions are based on the [Front Runner Sports pace zone calculator](https://frontrunnersports.com.au/runningsquads/pacezonecalculator/) implementation. This calculator is planned to be refactored to support multiple zone calculation methodologies, including alternative systems by Lange & Pöhlitz and other established methods. See [Sources](#sources) for more information.
 
 ---
 
 ## Zone System Definition
 
-Our implementation uses a **5-zone CV-based system** derived from the Lange & Pöhlitz methodology (1995, updated 2014).
+Our implementation currently uses a **5-zone CV-based system** with zone percentages derived from the Front Runner Sports calculator, which uses the general Lange & Pöhlitz methodology framework (1995, updated 2014).
 
 ### Zone Overview
 
@@ -34,8 +36,8 @@ Our implementation uses a **5-zone CV-based system** derived from the Lange & P�
 
 ```javascript
 // Zone 1 pace range (slower than CV)
-zone1_upper = CV_pace / 0.70  // Slowest end (70% of CV speed)
-zone1_lower = CV_pace / 0.85  // Fastest end (85% of CV speed)
+zone1_upper = CV_pace / 0.7; // Slowest end (70% of CV speed)
+zone1_lower = CV_pace / 0.85; // Fastest end (85% of CV speed)
 ```
 
 **Characteristics:**
@@ -66,8 +68,8 @@ zone1_lower = CV_pace / 0.85  // Fastest end (85% of CV speed)
 
 ```javascript
 // Zone 2 pace range
-zone2_upper = CV_pace / 0.85  // Slowest end (85% of CV speed)
-zone2_lower = CV_pace / 0.95  // Fastest end (95% of CV speed)
+zone2_upper = CV_pace / 0.85; // Slowest end (85% of CV speed)
+zone2_lower = CV_pace / 0.95; // Fastest end (95% of CV speed)
 ```
 
 **Characteristics:**
@@ -98,8 +100,8 @@ zone2_lower = CV_pace / 0.95  // Fastest end (95% of CV speed)
 
 ```javascript
 // Zone 3 pace range
-zone3_upper = CV_pace / 0.95   // Slowest end (95% of CV speed)
-zone3_lower = CV_pace / 1.00   // Fastest end (100% of CV speed = CV pace)
+zone3_upper = CV_pace / 0.95; // Slowest end (95% of CV speed)
+zone3_lower = CV_pace / 1.0; // Fastest end (100% of CV speed = CV pace)
 ```
 
 **Characteristics:**
@@ -131,8 +133,8 @@ zone3_lower = CV_pace / 1.00   // Fastest end (100% of CV speed = CV pace)
 
 ```javascript
 // Zone 4 pace range (faster than CV)
-zone4_upper = CV_pace / 1.00   // Slowest end (100% of CV speed = CV pace)
-zone4_lower = CV_pace / 1.05   // Fastest end (105% of CV speed)
+zone4_upper = CV_pace / 1.0; // Slowest end (100% of CV speed = CV pace)
+zone4_lower = CV_pace / 1.05; // Fastest end (105% of CV speed)
 ```
 
 **Characteristics:**
@@ -163,8 +165,8 @@ zone4_lower = CV_pace / 1.05   // Fastest end (105% of CV speed)
 
 ```javascript
 // Zone 5 pace range (significantly faster than CV)
-zone5_upper = CV_pace / 1.05   // Slowest end (105% of CV speed)
-zone5_lower = CV_pace / 1.20   // Fastest end (120% of CV speed)
+zone5_upper = CV_pace / 1.05; // Slowest end (105% of CV speed)
+zone5_lower = CV_pace / 1.2; // Fastest end (120% of CV speed)
 ```
 
 **Characteristics:**
@@ -383,10 +385,26 @@ Support both:
 
 ---
 
-## References
+## Sources
 
-- Lange, G.; Pöhlitz, L. (1995, updated 2014). Zone calculation methodology.
-- Front Runner Sports CV Calculator: https://frontrunnersports.com.au/runningsquads/pacezonecalculator/
+### Current Implementation
+
+The zone percentages used in this calculator are based on:
+
+- **Front Runner Sports.** [Pace Zone Calculator](https://frontrunnersports.com.au/runningsquads/pacezonecalculator/). Front Runner Sports, Australia. (Primary source for current zone percentage implementation)
+
+Front Runner Sports cites the general methodology as:
+- Lange, G., & Pöhlitz, L. (1995, updated 2014). Critical Velocity and training zone methodology.
+
+### Alternative Zone Methodologies (Future Implementation)
+
+Alternative training zone systems are documented in [docs/sources/](sources/) for future implementation:
+
+- **Lange, G., & Pöhlitz, L.** (2014). [*Determination of prescribed velocities in basic endurance training*](sources/vcr_table_2014.pdf). Presented at Endurance Summit 2018, Skanderborg, Denmark.
+- **Lange, G., & Pöhlitz, L.** (2022). [*Determination of prescribed velocities in basic endurance training*](sources/vcr_table_2022.jpg) (Updated version).
+
+### Additional References
+
 - Seiler, S. (2010). What is best practice for training intensity and duration distribution in endurance athletes? _International Journal of Sports Physiology and Performance_, 5(3), 276-291. (Polarized training)
 - Daniels, J. (2013). _Daniels' Running Formula_ (3rd ed.). Human Kinetics. (Comparison reference)
 
@@ -394,6 +412,10 @@ Support both:
 
 ## Changelog
 
+- **2025-11-24:** Updated documentation with proper source citations
+  - Clarified that current implementation uses Front Runner Sports zone percentages
+  - Added reference materials (Lange & Pöhlitz 2014/2022 tables) to docs/sources/
+  - Added note about planned refactoring to support multiple zone methodologies
 - **2025-11-23:** Replaced reverse-engineered formulas with percentage-based zone calculations
   - All zones now calculated as percentages of Critical Velocity (70%-120%)
   - Simplified and more physiologically sound approach
@@ -402,3 +424,4 @@ Support both:
 - **TODO:** Add heart rate zone correlations
 - **TODO:** Validate zone durations against literature
 - **TODO:** Add practical training examples
+- **TODO:** Implement support for multiple zone calculation methodologies

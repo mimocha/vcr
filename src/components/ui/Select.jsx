@@ -23,7 +23,9 @@ export default function Select({
       {label && (
         <label
           htmlFor={id}
-          className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}
+          className={`block text-sm font-medium mb-1 ${
+            isDark ? "text-gray-200" : "text-gray-700"
+          }`}
         >
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
@@ -44,13 +46,13 @@ export default function Select({
                 ? "border-red-400 focus:ring-red-400 focus:border-red-400 bg-red-500/10 text-red-200"
                 : "border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50"
               : isDark
-                ? "border-white/[0.15] focus:ring-blue-400 focus:border-blue-400 bg-white/[0.05] text-white"
-                : "border-white/40 focus:ring-blue-500 focus:border-blue-500 bg-white/60"
+              ? "border-white/[0.15] focus:ring-blue-400 focus:border-blue-400 bg-white/[0.30] text-gray-900"
+              : "border-white/40 focus:ring-blue-500 focus:border-blue-500 bg-white/60"
           }
         `}
         style={{
-          backdropFilter: 'blur(8px) saturate(150%)',
-          WebkitBackdropFilter: 'blur(8px) saturate(150%)',
+          backdropFilter: "blur(12px) saturate(150%)",
+          WebkitBackdropFilter: "blur(12px) saturate(150%)",
         }}
         aria-invalid={hasError}
         aria-describedby={hasError ? `${id}-error` : undefined}
@@ -64,7 +66,10 @@ export default function Select({
       </select>
 
       {hasError && (
-        <p id={`${id}-error`} className={`mt-1 text-sm ${isDark ? 'text-red-400' : 'text-red-600'}`}>
+        <p
+          id={`${id}-error`}
+          className={`mt-1 text-sm ${isDark ? "text-red-400" : "text-red-600"}`}
+        >
           {error}
         </p>
       )}
