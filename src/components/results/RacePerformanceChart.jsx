@@ -58,10 +58,10 @@ export default function RacePerformanceChart({
     }
 
     // Show range: min to max
-    const minTime = formatTimeWithHours(min.timeSeconds);
-    const maxTime = formatTimeWithHours(max.timeSeconds);
+    const slowestTime = formatTimeWithHours(min.timeSeconds);
+    const fastestTime = formatTimeWithHours(max.timeSeconds);
 
-    return `${minTime} - ${maxTime}`;
+    return `${fastestTime} - ${slowestTime}`;
   };
 
   /**
@@ -105,6 +105,20 @@ export default function RacePerformanceChart({
         Predictions based on{" "}
         <strong>{cvMode === "raw" ? "unadjusted" : "adjusted"}</strong> critical
         velocity
+      </p>
+
+      {/* Warning note */}
+      <p
+        className={`text-xs mb-4 px-3 py-2 rounded-lg ${
+          isDark
+            ? "bg-yellow-900/30 text-yellow-300 border border-yellow-700/50"
+            : "bg-yellow-50 text-yellow-800 border border-yellow-300"
+        }`}
+      >
+        <strong>
+          Warning: This race prediction model is still under development.
+          Results are known to be inaccurate.
+        </strong>
       </p>
 
       <div className="overflow-x-auto">

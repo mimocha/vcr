@@ -8,19 +8,19 @@ export const RACE_DISTANCES = {
     id: "100m",
     name: "100m",
     distanceMeters: 100,
-    typical: true,
+    typical: false,
   },
   FOUR_HUNDRED: {
     id: "400m",
     name: "400m",
     distanceMeters: 400,
-    typical: true,
+    typical: false,
   },
   EIGHT_HUNDRED: {
     id: "800m",
     name: "800m",
     distanceMeters: 800,
-    typical: true,
+    typical: false,
   },
   FIFTEEN_HUNDRED: {
     id: "1500m",
@@ -62,7 +62,7 @@ export const RACE_DISTANCES = {
     id: "30k",
     name: "30K",
     distanceMeters: 30000,
-    typical: true,
+    typical: false,
   },
   MARATHON: {
     id: "marathon",
