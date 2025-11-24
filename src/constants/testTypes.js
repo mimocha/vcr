@@ -5,6 +5,8 @@
 
 export const TEST_TYPES = {
   THIRTY_MIN: "30min",
+  FORTY_FIVE_MIN: "45min",
+  SIXTY_MIN: "60min",
   COOPER: "cooper",
   TWO_POINT: "2point",
 };
@@ -25,7 +27,40 @@ export const TEST_CONFIGS = {
         required: true,
       },
     ],
-    recommended: false,
+    accuracy: "Low (overestimates CV due to short duration)",
+  },
+  [TEST_TYPES.FORTY_FIVE_MIN]: {
+    id: TEST_TYPES.FORTY_FIVE_MIN,
+    name: "45-Minutes Test",
+    shortName: "45min",
+    description: "Run maximum distance in exactly 45 minutes",
+    duration: 2700, // seconds
+    inputs: [
+      {
+        id: "distance",
+        label: "Distance (meters)",
+        placeholder: "e.g., 7500",
+        type: "number",
+        required: true,
+      },
+    ],
+    accuracy: "Moderate (overestimates CV due to shorter duration)",
+  },
+  [TEST_TYPES.SIXTY_MIN]: {
+    id: TEST_TYPES.SIXTY_MIN,
+    name: "60-Minutes Test",
+    shortName: "60min",
+    description: "Run maximum distance in exactly 60 minutes",
+    duration: 3600, // seconds
+    inputs: [
+      {
+        id: "distance",
+        label: "Distance (meters)",
+        placeholder: "e.g., 10000",
+        type: "number",
+        required: true,
+      },
+    ],
     accuracy: "High (direct approximation of CV)",
   },
   [TEST_TYPES.COOPER]: {
@@ -43,8 +78,7 @@ export const TEST_CONFIGS = {
         required: true,
       },
     ],
-    recommended: false,
-    accuracy: "Moderate (overestimates CV due to shorter duration)",
+    accuracy: "Low (overestimates CV due to short duration)",
   },
   [TEST_TYPES.TWO_POINT]: {
     id: TEST_TYPES.TWO_POINT,
@@ -85,7 +119,6 @@ export const TEST_CONFIGS = {
         note: "Duration of second test",
       },
     ],
-    recommended: false,
     accuracy: "Very High (true CV calculation with D')",
   },
 };

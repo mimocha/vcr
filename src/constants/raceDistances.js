@@ -4,23 +4,35 @@
  */
 
 export const RACE_DISTANCES = {
-  MILE: {
-    id: "mile",
-    name: "Mile",
-    distanceMeters: 1609.34,
+  ONE_HUNDRED: {
+    id: "100m",
+    name: "100m",
+    distanceMeters: 100,
+    typical: true,
+  },
+  FOUR_HUNDRED: {
+    id: "400m",
+    name: "400m",
+    distanceMeters: 400,
+    typical: true,
+  },
+  EIGHT_HUNDRED: {
+    id: "800m",
+    name: "800m",
+    distanceMeters: 800,
     typical: true,
   },
   FIFTEEN_HUNDRED: {
     id: "1500m",
     name: "1500m",
     distanceMeters: 1500,
-    typical: true,
-  },
-  THREE_K: {
-    id: "3k",
-    name: "3K",
-    distanceMeters: 3000,
     typical: false,
+  },
+  MILE: {
+    id: "mile",
+    name: "Mile",
+    distanceMeters: 1609.34,
+    typical: true,
   },
   FIVE_K: {
     id: "5k",
@@ -34,17 +46,23 @@ export const RACE_DISTANCES = {
     distanceMeters: 10000,
     typical: true,
   },
-  FIFTEEN_K: {
-    id: "15k",
-    name: "15K",
-    distanceMeters: 15000,
-    typical: false,
+  TEN_MILE: {
+    id: "10mile",
+    name: "10 Mile",
+    distanceMeters: 16093.4,
+    typical: true,
   },
   HALF_MARATHON: {
     id: "half",
     name: "Half Marathon",
     distanceMeters: 21097.5,
     typical: true,
+  },
+  THIRTY_K: {
+    id: "30k",
+    name: "30K",
+    distanceMeters: 30000,
+    typical: false,
   },
   MARATHON: {
     id: "marathon",
@@ -63,7 +81,7 @@ export function getRaceDistances(typicalOnly = true) {
   const distances = Object.values(RACE_DISTANCES);
 
   if (typicalOnly) {
-    return distances.filter(d => d.typical);
+    return distances.filter((d) => d.typical);
   }
 
   return distances;

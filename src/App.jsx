@@ -12,6 +12,8 @@ import {
   calculateCV30min,
   calculateCVCooper,
   calculateCV2Point,
+  calculateCV45min,
+  calculateCV60min,
 } from "./utils/calculations/cvCalculators";
 import { calculateTrainingZones } from "./utils/calculations/zoneCalculators";
 import { validateDistance, validate2PointTest } from "./utils/validators";
@@ -25,7 +27,7 @@ function App() {
   // State management
   const [testType, setTestType] = useState(DEFAULT_TEST_TYPE);
   const [unitSystem, setUnitSystem] = useState(UNIT_SYSTEMS.METRIC);
-  const [cvMode, setCvMode] = useState('raw'); // 'raw' or 'adjusted'
+  const [cvMode, setCvMode] = useState("raw"); // 'raw' or 'adjusted'
   const [inputValues, setInputValues] = useState({});
   const [errors, setErrors] = useState({});
   const [cvData, setCvData] = useState(null);
@@ -42,7 +44,8 @@ function App() {
   // Recalculate zones when CV mode changes
   useEffect(() => {
     if (cvData) {
-      const selectedVelocity = cvMode === 'raw' ? cvData.velocity_ms_raw : cvData.velocity_ms;
+      const selectedVelocity =
+        cvMode === "raw" ? cvData.velocity_ms_raw : cvData.velocity_ms;
       const trainingZones = calculateTrainingZones(selectedVelocity);
       setZones(trainingZones);
     }
@@ -70,41 +73,20 @@ function App() {
     const newErrors = {};
 
     try {
-      if (testType === TEST_TYPES.THIRTY_MIN) {
-        // Validate 30min test
-        const distanceMeters = parseFloat(inputValues.distance);
-        const validation = validateDistance(distanceMeters, {
-          min: 1000,
-          max: 12000,
-        });
+      // Critical value variable
+      let cv = null;
 
-        if (!validation.valid) {
-          newErrors.distance = validation.error;
-          setErrors(newErrors);
-          return;
-        }
-
-        // Calculate CV
-        const cv = calculateCV30min(distanceMeters);
-        setCvData(cv);
-
-        // Calculate zones
-        const trainingZones = calculateTrainingZones(cv.velocity_ms);
-        setZones(trainingZones);
-
-        // Scroll to results
-        setTimeout(() => {
-          document.getElementById("results")?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }, 100);
-      } else if (testType === TEST_TYPES.COOPER) {
-        // Validate Cooper test
+      if (
+        testType === TEST_TYPES.THIRTY_MIN ||
+        testType === TEST_TYPES.FORTY_FIVE_MIN ||
+        testType === TEST_TYPES.SIXTY_MIN ||
+        testType === TEST_TYPES.COOPER
+      ) {
+        // Validate single distance-input type tests
         const distanceMeters = parseFloat(inputValues.distance);
         const validation = validateDistance(distanceMeters, {
           min: 100,
-          max: 5000,
+          max: 100000,
         });
 
         if (!validation.valid) {
@@ -113,23 +95,27 @@ function App() {
           return;
         }
 
-        // Calculate CV
-        const cv = calculateCVCooper(distanceMeters);
-        setCvData(cv);
-
-        // Calculate zones
-        const trainingZones = calculateTrainingZones(cv.velocity_ms);
-        setZones(trainingZones);
-
-        // Scroll to results
-        setTimeout(() => {
-          document.getElementById("results")?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }, 100);
+        // Calculate critical value
+        switch (testType) {
+          case TEST_TYPES.THIRTY_MIN: {
+            cv = calculateCV30min(distanceMeters);
+            break;
+          }
+          case TEST_TYPES.FORTY_FIVE_MIN: {
+            cv = calculateCV45min(distanceMeters);
+            break;
+          }
+          case TEST_TYPES.SIXTY_MIN: {
+            cv = calculateCV60min(distanceMeters);
+            break;
+          }
+          case TEST_TYPES.COOPER: {
+            cv = calculateCVCooper(distanceMeters);
+            break;
+          }
+        }
       } else if (testType === TEST_TYPES.TWO_POINT) {
-        // Validate 2-point test
+        // Validate two-point test
         const distance1Meters = parseFloat(inputValues.distance1);
         const time1 = Number(inputValues.time1);
         const distance2Meters = parseFloat(inputValues.distance2);
@@ -148,26 +134,22 @@ function App() {
         }
 
         // Calculate CV
-        const cv = calculateCV2Point(
-          distance1Meters,
-          time1,
-          distance2Meters,
-          time2
-        );
-        setCvData(cv);
-
-        // Calculate zones
-        const trainingZones = calculateTrainingZones(cv.velocity_ms);
-        setZones(trainingZones);
-
-        // Scroll to results
-        setTimeout(() => {
-          document.getElementById("results")?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }, 100);
+        cv = calculateCV2Point(distance1Meters, time1, distance2Meters, time2);
       }
+
+      setCvData(cv);
+
+      // Calculate zones
+      const trainingZones = calculateTrainingZones(cv.velocity_ms);
+      setZones(trainingZones);
+
+      // Scroll to results
+      setTimeout(() => {
+        document.getElementById("results")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
     } catch (error) {
       alert(`Calculation error: ${error.message}`);
     }
@@ -175,7 +157,12 @@ function App() {
 
   // Check if form is complete
   const isFormComplete = () => {
-    if (testType === TEST_TYPES.THIRTY_MIN || testType === TEST_TYPES.COOPER) {
+    if (
+      testType === TEST_TYPES.THIRTY_MIN ||
+      testType === TEST_TYPES.FORTY_FIVE_MIN ||
+      testType === TEST_TYPES.SIXTY_MIN ||
+      testType === TEST_TYPES.COOPER
+    ) {
       return inputValues.distance && inputValues.distance !== "";
     } else if (testType === TEST_TYPES.TWO_POINT) {
       return (

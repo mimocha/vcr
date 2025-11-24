@@ -55,6 +55,100 @@ export function calculateCV30min(distance, customDPrime = null) {
 }
 
 /**
+ * Calculate Critical Velocity from 45-minute test distance
+ *
+ * @param {number} distance - Distance covered in 45 minutes (meters)
+ * @param {number} customDPrime - Optional custom D' value (meters)
+ * @returns {object} CV velocity and pace data
+ */
+export function calculateCV45min(distance, customDPrime = null) {
+  if (distance <= 0 || !isFinite(distance)) {
+    throw new Error("Distance must be a positive number");
+  }
+
+  const TEST_DURATION = 2700; // 45 minutes in seconds
+
+  // Estimate D' for single-point test (or use custom value)
+  const d_prime = customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
+  const d_prime_estimated = customDPrime === null;
+
+  // Raw (unadjusted) Critical Velocity in m/s
+  const velocity_ms_raw = distance / TEST_DURATION;
+
+  // Raw pace in seconds per kilometer
+  const pace_sec_per_km_raw = 1000 / velocity_ms_raw;
+
+  // Adjusted distance (removing D' contribution)
+  const adjusted_distance = distance - d_prime;
+
+  // Adjusted Critical Velocity in m/s
+  // For 45-min test: CV = (Distance - D') / 2700
+  const velocity_ms = adjusted_distance / TEST_DURATION;
+
+  // Adjusted pace in seconds per kilometer
+  const pace_sec_per_km = 1000 / velocity_ms;
+
+  return {
+    velocity_ms,
+    pace_sec_per_km,
+    velocity_ms_raw,
+    pace_sec_per_km_raw,
+    adjusted_distance,
+    distance,
+    duration: TEST_DURATION,
+    d_prime,
+    d_prime_estimated,
+  };
+}
+
+/**
+ * Calculate Critical Velocity from 60-minute test distance
+ *
+ * @param {number} distance - Distance covered in 60 minutes (meters)
+ * @param {number} customDPrime - Optional custom D' value (meters)
+ * @returns {object} CV velocity and pace data
+ */
+export function calculateCV60min(distance, customDPrime = null) {
+  if (distance <= 0 || !isFinite(distance)) {
+    throw new Error("Distance must be a positive number");
+  }
+
+  const TEST_DURATION = 3600; // 60 minutes in seconds
+
+  // Estimate D' for single-point test (or use custom value)
+  const d_prime = customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
+  const d_prime_estimated = customDPrime === null;
+
+  // Raw (unadjusted) Critical Velocity in m/s
+  const velocity_ms_raw = distance / TEST_DURATION;
+
+  // Raw pace in seconds per kilometer
+  const pace_sec_per_km_raw = 1000 / velocity_ms_raw;
+
+  // Adjusted distance (removing D' contribution)
+  const adjusted_distance = distance - d_prime;
+
+  // Adjusted Critical Velocity in m/s
+  // For 60-min test: CV = (Distance - D') / 3600
+  const velocity_ms = adjusted_distance / TEST_DURATION;
+
+  // Adjusted pace in seconds per kilometer
+  const pace_sec_per_km = 1000 / velocity_ms;
+
+  return {
+    velocity_ms,
+    pace_sec_per_km,
+    velocity_ms_raw,
+    pace_sec_per_km_raw,
+    adjusted_distance,
+    distance,
+    duration: TEST_DURATION,
+    d_prime,
+    d_prime_estimated,
+  };
+}
+
+/**
  * Calculate Critical Velocity from Cooper 12-minute test
  *
  * @param {number} distance - Distance covered in 12 minutes (meters)
