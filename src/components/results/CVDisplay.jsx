@@ -3,7 +3,9 @@
  * Display CV value and converted paces
  */
 
+import { useState } from "react";
 import Card from "../ui/Card";
+import LearnMoreModal from "../ui/LearnMoreModal";
 import {
   formatVelocity,
   formatPacePerKm,
@@ -19,6 +21,7 @@ export default function CVDisplay({
   onCvModeChange,
 }) {
   const { isDark } = useTheme();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!cvData) {
     return null;
@@ -316,19 +319,32 @@ export default function CVDisplay({
         </div>
       </div>
 
-      <div
-        className={`
-        mt-4 p-3 rounded-xl backdrop-blur-sm
-        ${isDark ? "bg-white/5 border border-white/10" : "bg-gray-50/80"}
-      `}
-      >
-        <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-          <strong>What is Critical Velocity?</strong> CV represents the
-          theoretical maximum sustainable running pace. Efforts above CV deplete
-          your anaerobic capacity (D&apos;), while efforts below CV can be
-          sustained for extended periods.
-        </p>
+      {/* Learn More Button */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className={`
+            px-6 py-2 rounded-full font-medium text-sm transition-all
+            ${
+              isDark
+                ? "bg-white/10 hover:bg-white/15 border border-white/20 text-gray-300"
+                : "bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800"
+            }
+          `}
+        >
+          About Critical Velocity
+        </button>
       </div>
+
+      {/* Learn More Modal */}
+      <LearnMoreModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        defaultTab="cv"
+        cvMode={cvMode}
+        d_prime={d_prime}
+        d_prime_estimated={d_prime_estimated}
+      />
     </Card>
   );
 }

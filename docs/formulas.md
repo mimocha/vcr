@@ -474,6 +474,7 @@ function calculateCV2Point(distance1, time1, distance2, time2) {
    - How to use D' for predicting race times at various distances
    - Using D' to calculate interval training prescriptions
    - Relationship between D' and sprint/speed work
+   - **See [predictions.md](predictions.md) for detailed analysis of race prediction accuracy across distances**
 
 3. **Individual Variability:**
 
@@ -488,6 +489,7 @@ function calculateCV2Point(distance1, time1, distance2, time2) {
    - Pace calculators for various distances
    - Recovery time estimation between efforts
    - Interval prescription (work:rest ratios)
+   - **See [predictions.md](predictions.md) for technical analysis of prediction accuracy and limitations**
 
 5. **Alternative Test Protocols:**
    - 3km and 6km time trial method

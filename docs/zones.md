@@ -70,6 +70,8 @@ T₂ = T₁ × (D₂/D₁)^1.06
 
 This provides physiologically accurate paces for high-intensity training zones.
 
+> **Note on Prediction Accuracy:** The CV model works best for 5K-10K predictions, which is why Z4 uses these distances. For detailed analysis of why prediction accuracy varies by distance, see [predictions.md](predictions.md).
+
 ---
 
 ## Zone 1: Easy

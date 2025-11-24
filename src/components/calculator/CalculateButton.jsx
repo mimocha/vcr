@@ -14,7 +14,7 @@ export default function CalculateButton({ onClick, disabled = false }) {
       fullWidth
       type="button"
     >
-      Calculate Critical Velocity
+      Calculate
     </Button>
   );
 }

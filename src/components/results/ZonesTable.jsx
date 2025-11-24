@@ -3,8 +3,10 @@
  * Display training zones with pace ranges
  */
 
+import { useState } from "react";
 import Card from "../ui/Card";
 import Select from "../ui/Select";
+import LearnMoreModal from "../ui/LearnMoreModal";
 import {
   UNIT_SYSTEMS,
   ZONE_COLORS,
@@ -20,12 +22,18 @@ export default function ZonesTable({
   cvMode = "raw",
   zoneSystem = DEFAULT_ZONE_SYSTEM,
   onZoneSystemChange,
+  cvData,
 }) {
   const { isDark } = useTheme();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!zones || zones.length === 0) {
     return null;
   }
+
+  // Extract d_prime values from cvData for modal
+  const d_prime = cvData?.d_prime;
+  const d_prime_estimated = cvData?.d_prime_estimated;
 
   const isMetric = unitSystem === UNIT_SYSTEMS.METRIC;
 
@@ -120,34 +128,33 @@ export default function ZonesTable({
         />
       </div>
 
-      {/* Dynamic notes card */}
-      <div
-        className={`
-          my-4 p-3 rounded-xl backdrop-blur-sm border
-          ${
-            isDark
-              ? "bg-blue-500/10 border-blue-400/30"
-              : "bg-blue-50/80 border-blue-200"
-          }
-        `}
-      >
-        <p
-          className={`text-sm font-semibold ${
-            isDark ? "text-blue-200" : "text-blue-800"
-          }`}
+      {/* Learn More Button */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className={`
+            px-6 py-2 rounded-full font-medium text-sm transition-all
+            ${
+              isDark
+                ? "bg-white/10 hover:bg-white/15 border border-white/20 text-gray-300"
+                : "bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800"
+            }
+          `}
         >
-          About this zone system:
-        </p>
-        <ul
-          className={`text-xs mt-2 space-y-1 ${
-            isDark ? "text-blue-100" : "text-blue-900"
-          }`}
-        >
-          {currentSystem?.notes.map((note, index) => (
-            <li key={index}>• {note}</li>
-          ))}
-        </ul>
+          About Training Zones
+        </button>
       </div>
+
+      {/* Learn More Modal */}
+      <LearnMoreModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        defaultTab="zones"
+        zoneSystem={zoneSystem}
+        cvMode={cvMode}
+        d_prime={d_prime}
+        d_prime_estimated={d_prime_estimated}
+      />
     </Card>
   );
 }

@@ -28,6 +28,7 @@ export default function ResultsPanel({
         cvMode={cvMode}
         zoneSystem={zoneSystem}
         onZoneSystemChange={onZoneSystemChange}
+        cvData={cvData}
       />
       <CVDisplay cvData={cvData} unitSystem={unitSystem} cvMode={cvMode} onCvModeChange={onCvModeChange} />
       <RacePerformanceChart cvData={cvData} unitSystem={unitSystem} cvMode={cvMode} />

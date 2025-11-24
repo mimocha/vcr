@@ -3,7 +3,9 @@
  * Display predicted race times for standard distances
  */
 
+import { useState } from "react";
 import Card from "../ui/Card";
+import LearnMoreModal from "../ui/LearnMoreModal";
 import { predictAllRaces } from "../../utils/calculations/racePerformanceCalculators";
 import {
   formatTimeWithHours,
@@ -16,9 +18,10 @@ import { useTheme } from "../../contexts/ThemeContext";
 export default function RacePerformanceChart({
   cvData,
   unitSystem = UNIT_SYSTEMS.METRIC,
-  cvMode = 'raw',
+  cvMode = "raw",
 }) {
   const { isDark } = useTheme();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!cvData || !cvData.velocity_ms || !cvData.d_prime) {
     return null;
@@ -27,7 +30,7 @@ export default function RacePerformanceChart({
   const { velocity_ms, velocity_ms_raw, d_prime, d_prime_estimated } = cvData;
 
   // Use the selected CV velocity based on cvMode
-  const selectedVelocity = cvMode === 'raw' ? velocity_ms_raw : velocity_ms;
+  const selectedVelocity = cvMode === "raw" ? velocity_ms_raw : velocity_ms;
 
   // Predict all standard race distances
   const racePredictions = predictAllRaces(
@@ -97,12 +100,10 @@ export default function RacePerformanceChart({
     <Card title="Race Performance Predictions">
       {/* Explanatory note */}
       <p
-        className={`text-xs mb-4 ${
-          isDark ? "text-gray-400" : "text-gray-600"
-        }`}
+        className={`text-xs mb-4 ${isDark ? "text-gray-400" : "text-gray-600"}`}
       >
         Predictions based on{" "}
-        <strong>{cvMode === 'raw' ? 'unadjusted' : 'adjusted'}</strong> critical
+        <strong>{cvMode === "raw" ? "unadjusted" : "adjusted"}</strong> critical
         velocity
       </p>
 
@@ -174,60 +175,32 @@ export default function RacePerformanceChart({
         </table>
       </div>
 
-      {/* Explanatory notes */}
-      <div
-        className={`
-        mt-4 p-3 rounded-xl backdrop-blur-sm border
-        ${
-          isDark
-            ? "bg-amber-500/10 border-amber-400/30"
-            : "bg-amber-50/80 border-amber-200"
-        }
-      `}
-      >
-        <p
-          className={`text-sm ${isDark ? "text-amber-200" : "text-amber-800"}`}
+      {/* Learn More Button */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className={`
+            px-6 py-2 rounded-full font-medium text-sm transition-all
+            ${
+              isDark
+                ? "bg-white/10 hover:bg-white/15 border border-white/20 text-gray-300"
+                : "bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800"
+            }
+          `}
         >
-          <strong>About these predictions:</strong>
-        </p>
-        <ul
-          className={`text-xs mt-2 space-y-1 ${
-            isDark ? "text-amber-100" : "text-amber-900"
-          }`}
-        >
-          <li>
-            • Predictions use{" "}
-            <strong>{cvMode === 'raw' ? 'unadjusted (raw)' : 'adjusted'}</strong>{" "}
-            critical velocity{cvMode === 'raw' ? ' (includes anaerobic contribution)' : ' (accounts for anaerobic capacity)'}
-          </li>
-          {d_prime_estimated && (
-            <>
-              <li>
-                • D&apos; is estimated ({d_prime.toFixed(0)}m)
-                with ±100m confidence interval
-              </li>
-              <li>
-                • For higher accuracy, use the 2-Point Test to measure D&apos;
-                directly
-              </li>
-            </>
-          )}
-          {!d_prime_estimated && (
-            <li>
-              • D&apos; is measured ({d_prime.toFixed(0)}m)
-              from your 2-Point Test
-            </li>
-          )}
-          <li>
-            • Longer distances (10K+) are more accurate due to reduced D&apos;
-            influence
-          </li>
-          <li>
-            • Times assume optimal pacing and race conditions - adjust for
-            terrain, weather, and fatigue
-          </li>
-        </ul>
+          About Race Predictions
+        </button>
       </div>
+
+      {/* Learn More Modal */}
+      <LearnMoreModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        defaultTab="predictions"
+        cvMode={cvMode}
+        d_prime={d_prime}
+        d_prime_estimated={d_prime_estimated}
+      />
     </Card>
   );
 }
