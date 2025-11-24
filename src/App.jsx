@@ -47,7 +47,11 @@ function App() {
     if (cvData) {
       const selectedVelocity =
         cvMode === "raw" ? cvData.velocity_ms_raw : cvData.velocity_ms;
-      const trainingZones = calculateTrainingZones(selectedVelocity, zoneSystem, cvData.d_prime);
+      const trainingZones = calculateTrainingZones(
+        selectedVelocity,
+        zoneSystem,
+        cvData.d_prime
+      );
       setZones(trainingZones);
     }
   }, [cvMode, cvData, zoneSystem]);
@@ -141,7 +145,11 @@ function App() {
       setCvData(cv);
 
       // Calculate zones
-      const trainingZones = calculateTrainingZones(cv.velocity_ms, zoneSystem, cv.d_prime);
+      const trainingZones = calculateTrainingZones(
+        cv.velocity_ms,
+        zoneSystem,
+        cv.d_prime
+      );
       setZones(trainingZones);
 
       // Scroll to results
@@ -211,7 +219,7 @@ function App() {
         <Header unitSystem={unitSystem} onUnitSystemChange={setUnitSystem} />
 
         <div className="space-y-6">
-          <Card title="Your Running Results">
+          <Card title="Input Your Test Results">
             <div className="space-y-6">
               <TestSelector value={testType} onChange={setTestType} />
 

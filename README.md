@@ -40,6 +40,10 @@ The calculator implements **two 5-zone training systems** based on frameworks by
 
 See [docs/zones.md](docs/zones.md) for comprehensive zone documentation and [docs/sources/](docs/sources/) for reference materials.
 
+### Race Predictions & Model Accuracy
+
+The calculator provides race time predictions using the CV model. For technical analysis of prediction accuracy across different race distances (and why the model works well for 5K-10K but fails for marathons), see [docs/predictions.md](docs/predictions.md).
+
 ### Future Development
 
 Additional zone calculation methodologies may be added:
