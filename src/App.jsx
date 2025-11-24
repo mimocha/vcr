@@ -6,7 +6,11 @@ import TestSelector from "./components/calculator/TestSelector";
 import TestInput from "./components/calculator/TestInput";
 import CalculateButton from "./components/calculator/CalculateButton";
 import ResultsPanel from "./components/results/ResultsPanel";
+import ExportButton from "./components/ui/ExportButton";
+import ExportModal from "./components/export/ExportModal";
+import ExportView from "./components/export/ExportView";
 import { useTheme } from "./contexts/ThemeContext";
+import { useExport } from "./hooks/useExport";
 
 import {
   calculateCV30min,
@@ -33,6 +37,17 @@ function App() {
   const [errors, setErrors] = useState({});
   const [cvData, setCvData] = useState(null);
   const [zones, setZones] = useState(null);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [exportOptions, setExportOptions] = useState({
+    includeZones: true,
+    includePredictions: true,
+    includeDate: true,
+    includeNotes: false,
+    notes: "",
+  });
+
+  // Export hook
+  const { exportToPng, isExporting } = useExport();
 
   // Reset inputs when test type changes
   useEffect(() => {
@@ -188,6 +203,19 @@ function App() {
     return false;
   };
 
+  // Handle export
+  const handleExport = async (options) => {
+    setExportOptions(options);
+    // Wait a bit for the ExportView to re-render with new options
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const result = await exportToPng(options);
+    if (result.success) {
+      setIsExportModalOpen(false);
+    } else {
+      alert(`Export failed: ${result.error}`);
+    }
+  };
+
   return (
     <div
       className={`min-h-screen py-8 px-4 transition-colors ${backgroundGradient} relative overflow-hidden`}
@@ -254,6 +282,33 @@ function App() {
 
         <Footer />
       </div>
+
+      {/* Export Button */}
+      <ExportButton
+        onClick={() => setIsExportModalOpen(true)}
+        visible={cvData && zones}
+      />
+
+      {/* Export Modal */}
+      <ExportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        onExport={handleExport}
+        isExporting={isExporting}
+      />
+
+      {/* Hidden Export View */}
+      {cvData && zones && (
+        <ExportView
+          cvData={cvData}
+          zones={zones}
+          unitSystem={unitSystem}
+          cvMode={cvMode}
+          zoneSystem={zoneSystem}
+          options={exportOptions}
+          isDark={isDark}
+        />
+      )}
     </div>
   );
 }
