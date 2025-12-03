@@ -18,7 +18,6 @@ export default function CVDisplay({
   cvData,
   unitSystem = UNIT_SYSTEMS.METRIC,
   cvMode = "raw",
-  onCvModeChange,
 }) {
   const { isDark } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,80 +44,7 @@ export default function CVDisplay({
       : undefined;
 
   return (
-    <Card>
-      {/* Title with Toggle */}
-      <div className="flex items-center justify-between mb-4">
-        <h2
-          className={`text-xl font-semibold ${
-            isDark ? "text-white" : "text-gray-800"
-          }`}
-        >
-          Your Critical Velocity
-        </h2>
-
-        {/* CV Mode Toggle */}
-        <div
-          className={`
-            relative flex items-center gap-2 rounded-xl p-1 backdrop-blur-xl border transition-all
-            ${
-              isDark
-                ? "bg-white/[0.08] border-white/30 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
-                : "bg-white/80 border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)]"
-            }
-          `}
-          style={{
-            backdropFilter: "blur(16px) saturate(180%)",
-            WebkitBackdropFilter: "blur(16px) saturate(180%)",
-          }}
-        >
-          {/* Sliding background indicator */}
-          <div
-            className={`
-              absolute top-1 bottom-1 rounded-lg transition-all duration-300 ease-in-out
-              ${
-                isDark
-                  ? "bg-gradient-to-r from-cyan-600/80 via-blue-500/80 to-indigo-600/80"
-                  : "bg-gradient-to-r from-cyan-600/80 via-blue-600/80 to-indigo-600/80"
-              }
-            `}
-            style={{
-              width: "calc(50% - 4px)",
-              transform:
-                cvMode === "raw" ? "translateX(0)" : "translateX(100%)",
-            }}
-          />
-          <button
-            onClick={() => onCvModeChange("raw")}
-            className={`
-              relative z-10 flex-1 px-4 py-2 rounded-lg font-medium transition-all text-sm text-center
-              ${
-                cvMode === "raw"
-                  ? "text-white"
-                  : isDark
-                  ? "text-gray-300 hover:bg-white/10"
-                  : "text-gray-600 hover:bg-gray-100"
-              }
-            `}
-          >
-            Unadjusted
-          </button>
-          <button
-            onClick={() => onCvModeChange("adjusted")}
-            className={`
-              relative z-10 flex-1 px-4 py-2 rounded-lg font-medium transition-all text-sm text-center
-              ${
-                cvMode === "adjusted"
-                  ? "text-white"
-                  : isDark
-                  ? "text-gray-300 hover:bg-white/10"
-                  : "text-gray-600 hover:bg-gray-100"
-              }
-            `}
-          >
-            Adjusted
-          </button>
-        </div>
-      </div>
+    <Card title="Your Critical Velocity">
       <div className="space-y-6">
         {/* Raw (Unadjusted) Section */}
         <div>

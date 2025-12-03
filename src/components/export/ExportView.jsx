@@ -114,21 +114,22 @@ export default function ExportView({
 
                   // Convert Tailwind color classes to actual colors
                   const colorMap = {
-                    "red-600": "#dc2626",
-                    "red-500": "#ef4444",
-                    "orange-600": "#ea580c",
-                    "orange-500": "#f97316",
                     "amber-500": "#eab308",
                     "amber-700": "#ca8a04",
-                    "yellow-600": "#ca8a04",
-                    "yellow-500": "#eab308",
-                    "green-600": "#16a34a",
-                    "green-500": "#22c55e",
-                    "emerald-800": "#065f46",
-                    "blue-600": "#2563eb",
                     "blue-500": "#3b82f6",
+                    "blue-600": "#2563eb",
                     "blue-800": "#1e40af",
+                    "emerald-800": "#065f46",
+                    "green-500": "#22c55e",
+                    "green-600": "#16a34a",
+                    "orange-500": "#f97316",
+                    "orange-600": "#ea580c",
+                    "orange-800": "#9a3412",
+                    "red-500": "#ef4444",
+                    "red-600": "#dc2626",
                     "rose-800": "#9f1239",
+                    "yellow-500": "#eab308",
+                    "yellow-600": "#ca8a04",
                   };
 
                   const bgKey = pillBg.split("/")[0];

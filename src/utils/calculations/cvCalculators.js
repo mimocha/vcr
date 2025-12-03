@@ -21,7 +21,8 @@ export function calculateCV30min(distance, customDPrime = null) {
   const TEST_DURATION = 1800; // 30 minutes in seconds
 
   // Estimate D' for single-point test (or use custom value)
-  const d_prime = customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
+  const d_prime =
+    customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
   const d_prime_estimated = customDPrime === null;
 
   // Raw (unadjusted) Critical Velocity in m/s
@@ -69,7 +70,8 @@ export function calculateCV45min(distance, customDPrime = null) {
   const TEST_DURATION = 2700; // 45 minutes in seconds
 
   // Estimate D' for single-point test (or use custom value)
-  const d_prime = customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
+  const d_prime =
+    customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
   const d_prime_estimated = customDPrime === null;
 
   // Raw (unadjusted) Critical Velocity in m/s
@@ -116,7 +118,8 @@ export function calculateCV60min(distance, customDPrime = null) {
   const TEST_DURATION = 3600; // 60 minutes in seconds
 
   // Estimate D' for single-point test (or use custom value)
-  const d_prime = customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
+  const d_prime =
+    customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
   const d_prime_estimated = customDPrime === null;
 
   // Raw (unadjusted) Critical Velocity in m/s
@@ -163,7 +166,8 @@ export function calculateCVCooper(distance, customDPrime = null) {
   const TEST_DURATION = 720; // 12 minutes in seconds
 
   // Estimate D' for single-point test (or use custom value)
-  const d_prime = customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
+  const d_prime =
+    customDPrime !== null ? customDPrime : D_PRIME_ESTIMATES.DEFAULT;
   const d_prime_estimated = customDPrime === null;
 
   // Raw (unadjusted) Critical Velocity in m/s
@@ -209,14 +213,29 @@ export function calculateCV2Point(distance1, time1, distance2, time2) {
   if (distance1 <= 0 || distance2 <= 0 || time1 <= 0 || time2 <= 0) {
     throw new Error("All values must be positive numbers");
   }
-  if (!isFinite(distance1) || !isFinite(distance2) || !isFinite(time1) || !isFinite(time2)) {
+  if (
+    !isFinite(distance1) ||
+    !isFinite(distance2) ||
+    !isFinite(time1) ||
+    !isFinite(time2)
+  ) {
     throw new Error("All values must be finite numbers");
   }
   if (time1 >= time2) {
     throw new Error("Second test must be longer than first test");
   }
   if (distance1 >= distance2) {
-    throw new Error("Second test distance should be greater than first test distance");
+    throw new Error(
+      "Second test distance should be greater than first test distance"
+    );
+  }
+
+  const velocity1_raw = distance1 / time1;
+  const velocity2_raw = distance2 / time2;
+
+  // The shorter test should always be faster; otherwise D' becomes negative
+  if (velocity1_raw <= velocity2_raw) {
+    throw new Error("First test must have a faster pace than second test");
   }
 
   // Critical Velocity in m/s (adjusted - true CV from 2-point method)
@@ -231,8 +250,6 @@ export function calculateCV2Point(distance1, time1, distance2, time2) {
   // Raw (unadjusted) Critical Velocity - average of both test velocities
   // Each individual test includes D' contribution: d = CV*t + D'
   // So raw velocity = d/t includes both aerobic and anaerobic contributions
-  const velocity1_raw = distance1 / time1;
-  const velocity2_raw = distance2 / time2;
   const velocity_ms_raw = (velocity1_raw + velocity2_raw) / 2;
 
   // Raw pace in seconds per kilometer

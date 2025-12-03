@@ -4,6 +4,7 @@ import Footer from "./components/layout/Footer";
 import Card from "./components/ui/Card";
 import TestSelector from "./components/calculator/TestSelector";
 import TestInput from "./components/calculator/TestInput";
+import AdvancedSettings from "./components/calculator/AdvancedSettings";
 import CalculateButton from "./components/calculator/CalculateButton";
 import ResultsPanel from "./components/results/ResultsPanel";
 import ExportButton from "./components/ui/ExportButton";
@@ -24,6 +25,10 @@ import { validateDistance, validate2PointTest } from "./utils/validators";
 
 import { DEFAULT_TEST_TYPE, TEST_TYPES } from "./constants/testTypes";
 import { UNIT_SYSTEMS, DEFAULT_ZONE_SYSTEM } from "./constants/zoneDefinitions";
+import {
+  D_PRIME_PRESETS,
+  D_PRIME_DEFAULTS_BY_TEST,
+} from "./constants/raceDistances";
 
 function App() {
   const { backgroundGradient, isDark } = useTheme();
@@ -33,6 +38,8 @@ function App() {
   const [unitSystem, setUnitSystem] = useState(UNIT_SYSTEMS.METRIC);
   const [cvMode, setCvMode] = useState("raw"); // 'raw' or 'adjusted'
   const [zoneSystem, setZoneSystem] = useState(DEFAULT_ZONE_SYSTEM);
+  const [dPrimePreset, setDPrimePreset] = useState(D_PRIME_PRESETS.MODERATE.id);
+  const [customDPrime, setCustomDPrime] = useState(250);
   const [inputValues, setInputValues] = useState({});
   const [errors, setErrors] = useState({});
   const [cvData, setCvData] = useState(null);
@@ -55,6 +62,13 @@ function App() {
     setErrors({});
     setCvData(null);
     setZones(null);
+
+    // Auto-adjust D' preset to recommended value for test type
+    const recommendedPreset = D_PRIME_DEFAULTS_BY_TEST[testType];
+    if (recommendedPreset) {
+      setDPrimePreset(recommendedPreset.id);
+      setCustomDPrime(recommendedPreset.value);
+    }
   }, [testType]);
 
   // Recalculate zones when CV mode or zone system changes
@@ -70,6 +84,17 @@ function App() {
       setZones(trainingZones);
     }
   }, [cvMode, cvData, zoneSystem]);
+
+  // Get current D' value based on preset or custom value
+  const getCurrentDPrime = () => {
+    if (dPrimePreset === "custom") {
+      return customDPrime;
+    }
+    const preset = Object.values(D_PRIME_PRESETS).find(
+      (p) => p.id === dPrimePreset
+    );
+    return preset ? preset.value : 250;
+  };
 
   // Handle input changes
   const handleInputChange = (inputId, value) => {
@@ -115,22 +140,25 @@ function App() {
           return;
         }
 
+        // Get current D' value for one-point tests
+        const dPrimeValue = getCurrentDPrime();
+
         // Calculate critical value
         switch (testType) {
           case TEST_TYPES.THIRTY_MIN: {
-            cv = calculateCV30min(distanceMeters);
+            cv = calculateCV30min(distanceMeters, dPrimeValue);
             break;
           }
           case TEST_TYPES.FORTY_FIVE_MIN: {
-            cv = calculateCV45min(distanceMeters);
+            cv = calculateCV45min(distanceMeters, dPrimeValue);
             break;
           }
           case TEST_TYPES.SIXTY_MIN: {
-            cv = calculateCV60min(distanceMeters);
+            cv = calculateCV60min(distanceMeters, dPrimeValue);
             break;
           }
           case TEST_TYPES.COOPER: {
-            cv = calculateCVCooper(distanceMeters);
+            cv = calculateCVCooper(distanceMeters, dPrimeValue);
             break;
           }
         }
@@ -260,6 +288,18 @@ function App() {
                 onSubmit={handleCalculate}
               />
 
+              <AdvancedSettings
+                testType={testType}
+                cvMode={cvMode}
+                onCvModeChange={setCvMode}
+                zoneSystem={zoneSystem}
+                onZoneSystemChange={setZoneSystem}
+                dPrimePreset={dPrimePreset}
+                onDPrimePresetChange={setDPrimePreset}
+                customDPrime={customDPrime}
+                onCustomDPrimeChange={setCustomDPrime}
+              />
+
               <CalculateButton
                 onClick={handleCalculate}
                 disabled={!isFormComplete()}
@@ -273,9 +313,7 @@ function App() {
               zones={zones}
               unitSystem={unitSystem}
               cvMode={cvMode}
-              onCvModeChange={setCvMode}
               zoneSystem={zoneSystem}
-              onZoneSystemChange={setZoneSystem}
             />
           )}
         </div>

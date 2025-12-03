@@ -4,17 +4,16 @@
  */
 
 import CVDisplay from "./CVDisplay";
-import ZonesTable from "./ZonesTable";
+import PowerDurationChart from "./PowerDurationChart";
 import RacePerformanceChart from "./RacePerformanceChart";
+import ZonesTable from "./ZonesTable";
 
 export default function ResultsPanel({
   cvData,
   zones,
   unitSystem,
   cvMode,
-  onCvModeChange,
   zoneSystem,
-  onZoneSystemChange,
 }) {
   if (!cvData || !zones) {
     return null;
@@ -26,12 +25,19 @@ export default function ResultsPanel({
         zones={zones}
         unitSystem={unitSystem}
         cvMode={cvMode}
-        zoneSystem={zoneSystem}
-        onZoneSystemChange={onZoneSystemChange}
         cvData={cvData}
       />
-      <CVDisplay cvData={cvData} unitSystem={unitSystem} cvMode={cvMode} onCvModeChange={onCvModeChange} />
-      <RacePerformanceChart cvData={cvData} unitSystem={unitSystem} cvMode={cvMode} />
+      <CVDisplay cvData={cvData} unitSystem={unitSystem} cvMode={cvMode} />
+      <PowerDurationChart
+        cvData={cvData}
+        unitSystem={unitSystem}
+        cvMode={cvMode}
+      />
+      <RacePerformanceChart
+        cvData={cvData}
+        unitSystem={unitSystem}
+        cvMode={cvMode}
+      />
     </div>
   );
 }

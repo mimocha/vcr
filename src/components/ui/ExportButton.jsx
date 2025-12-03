@@ -22,8 +22,8 @@ export default function ExportButton({ onClick, visible = true }) {
         focus:outline-none focus:ring-2 focus:ring-offset-2
         ${
           isDark
-            ? "bg-gradient-to-br from-blue-500/90 via-indigo-600/90 to-purple-600/90 border-white/20 focus:ring-blue-400 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
-            : "bg-gradient-to-br from-blue-600/90 via-blue-700/90 to-indigo-700/90 border-white/50 focus:ring-blue-500 shadow-[0_8px_32px_0_rgba(31,38,135,0.25)]"
+            ? "bg-blue-900/60 border-white/30 focus:ring-blue-300 shadow-[0_12px_40px_0_rgba(0,0,0,0.45)] hover:bg-blue-800/60"
+            : "bg-blue-700/60 border-white/50 focus:ring-blue-500 shadow-[0_12px_34px_0_rgba(84,63,196,0.35)] hover:bg-blue-600/60"
         }
       `}
       style={{

@@ -9,13 +9,18 @@ import Modal from "../ui/Modal";
 import Card from "../ui/Card";
 import Button from "../ui/Button";
 
-export default function ExportModal({ isOpen, onClose, onExport, isExporting = false }) {
+export default function ExportModal({
+  isOpen,
+  onClose,
+  onExport,
+  isExporting = false,
+}) {
   const { isDark } = useTheme();
 
   const [options, setOptions] = useState({
-    includeZones: true,
-    includePredictions: true,
     includeDate: true,
+    includeZones: true,
+    includePredictions: false,
     includeNotes: false,
   });
 
@@ -44,6 +49,32 @@ export default function ExportModal({ isOpen, onClose, onExport, isExporting = f
             <label className="flex items-center space-x-3 cursor-pointer group">
               <input
                 type="checkbox"
+                checked={options.includeDate}
+                onChange={() => handleOptionChange("includeDate")}
+                className={`
+                  w-5 h-5 rounded cursor-pointer
+                  transition-all duration-200
+                  ${
+                    isDark
+                      ? "accent-blue-500 bg-white/10 border-white/20"
+                      : "accent-blue-600 bg-gray-100 border-gray-300"
+                  }
+                `}
+              />
+              <span
+                className={`text-base ${
+                  isDark
+                    ? "text-gray-200 group-hover:text-white"
+                    : "text-gray-700 group-hover:text-gray-900"
+                } transition-colors`}
+              >
+                Current Date
+              </span>
+            </label>
+
+            <label className="flex items-center space-x-3 cursor-pointer group">
+              <input
+                type="checkbox"
                 checked={options.includeZones}
                 onChange={() => handleOptionChange("includeZones")}
                 className={`
@@ -58,7 +89,9 @@ export default function ExportModal({ isOpen, onClose, onExport, isExporting = f
               />
               <span
                 className={`text-base ${
-                  isDark ? "text-gray-200 group-hover:text-white" : "text-gray-700 group-hover:text-gray-900"
+                  isDark
+                    ? "text-gray-200 group-hover:text-white"
+                    : "text-gray-700 group-hover:text-gray-900"
                 } transition-colors`}
               >
                 Training Zones
@@ -82,34 +115,12 @@ export default function ExportModal({ isOpen, onClose, onExport, isExporting = f
               />
               <span
                 className={`text-base ${
-                  isDark ? "text-gray-200 group-hover:text-white" : "text-gray-700 group-hover:text-gray-900"
+                  isDark
+                    ? "text-gray-200 group-hover:text-white"
+                    : "text-gray-700 group-hover:text-gray-900"
                 } transition-colors`}
               >
                 Race Predictions
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer group">
-              <input
-                type="checkbox"
-                checked={options.includeDate}
-                onChange={() => handleOptionChange("includeDate")}
-                className={`
-                  w-5 h-5 rounded cursor-pointer
-                  transition-all duration-200
-                  ${
-                    isDark
-                      ? "accent-blue-500 bg-white/10 border-white/20"
-                      : "accent-blue-600 bg-gray-100 border-gray-300"
-                  }
-                `}
-              />
-              <span
-                className={`text-base ${
-                  isDark ? "text-gray-200 group-hover:text-white" : "text-gray-700 group-hover:text-gray-900"
-                } transition-colors`}
-              >
-                Current Date
               </span>
             </label>
 
@@ -130,7 +141,9 @@ export default function ExportModal({ isOpen, onClose, onExport, isExporting = f
               />
               <span
                 className={`text-base ${
-                  isDark ? "text-gray-200 group-hover:text-white" : "text-gray-700 group-hover:text-gray-900"
+                  isDark
+                    ? "text-gray-200 group-hover:text-white"
+                    : "text-gray-700 group-hover:text-gray-900"
                 } transition-colors`}
               >
                 Additional Notes
@@ -170,10 +183,20 @@ export default function ExportModal({ isOpen, onClose, onExport, isExporting = f
 
           {/* Action buttons */}
           <div className="flex gap-3 pt-2">
-            <Button onClick={onClose} variant="secondary" fullWidth disabled={isExporting}>
+            <Button
+              onClick={onClose}
+              variant="secondary"
+              fullWidth
+              disabled={isExporting}
+            >
               Cancel
             </Button>
-            <Button onClick={handleExport} variant="primary" fullWidth disabled={isExporting}>
+            <Button
+              onClick={handleExport}
+              variant="primary"
+              fullWidth
+              disabled={isExporting}
+            >
               {isExporting ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg

@@ -21,8 +21,8 @@ export default function Button({
 
   const variants = {
     primary: isDark
-      ? "bg-gradient-to-r from-blue-500/90 via-indigo-600/90 to-purple-600/90 text-white hover:opacity-80 focus:ring-blue-400 active:brightness-90 border border-white/20"
-      : "bg-gradient-to-r from-blue-600/90 via-blue-700/90 to-indigo-700/90 text-white hover:opacity-80 focus:ring-blue-500 active:brightness-90 border border-white/50",
+      ? "bg-blue-800/90 text-white hover:bg-blue-500/70 focus:ring-blue-800 active:brightness-110 border border-white/30 shadow-[0_12px_35px_rgba(0,0,0,0.45)]"
+      : "bg-blue-700/90 text-white hover:bg-blue-700/100 focus:ring-blue-700 active:brightness-110 border border-white/60 shadow-[0_12px_30px_rgba(84,63,196,0.35)]",
     secondary: isDark
       ? "bg-white/10 text-gray-200 hover:bg-white/20 focus:ring-gray-400 active:bg-white/30 border border-white/20"
       : "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400 active:bg-gray-400",

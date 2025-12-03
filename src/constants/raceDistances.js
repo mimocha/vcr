@@ -88,14 +88,79 @@ export function getRaceDistances(typicalOnly = true) {
 }
 
 /**
- * Default D' estimates based on athlete level
+ * D' (Anaerobic Capacity) Presets
+ *
+ * D' represents the finite energy resource above critical velocity.
+ * Shorter tests have proportionally higher anaerobic contribution,
+ * so the "effective" D' varies by test duration.
+ *
  * Reference: Research shows typical D' values range from 150-400m
+ * See: docs/formulas.md for detailed explanation
+ */
+export const D_PRIME_PRESETS = {
+  LOW: {
+    id: "low",
+    value: 150,
+    label: "Low (150m)",
+    description: "Recommended for 60-minute test",
+  },
+  MODERATE_LOW: {
+    id: "moderate-low",
+    value: 200,
+    label: "Moderate-Low (200m)",
+    description: "Recommended for 45-minute test",
+  },
+  MODERATE: {
+    id: "moderate",
+    value: 250,
+    label: "Moderate (250m)",
+    description: "Recommended for 30-minute test",
+  },
+  HIGH: {
+    id: "high",
+    value: 300,
+    label: "High (300m)",
+    description: "Recommended for Cooper 12-minute test",
+  },
+  VERY_HIGH: {
+    id: "very-high",
+    value: 350,
+    label: "Very High (350m)",
+    description: "Speed-focused / elite sprinter type",
+  },
+  CUSTOM: {
+    id: "custom",
+    value: null,
+    label: "Custom",
+    description: "Enter your own D' value (50-500m)",
+  },
+};
+
+/**
+ * Default D' preset for each test type
+ * Maps test type ID to recommended D' preset
+ */
+export const D_PRIME_DEFAULTS_BY_TEST = {
+  "30min": D_PRIME_PRESETS.MODERATE,
+  "45min": D_PRIME_PRESETS.MODERATE_LOW,
+  "60min": D_PRIME_PRESETS.LOW,
+  cooper: D_PRIME_PRESETS.HIGH,
+  "2point": null, // D' is calculated, not estimated
+};
+
+/**
+ * Legacy default for backward compatibility
  */
 export const D_PRIME_ESTIMATES = {
-  DEFAULT: 250, // Conservative middle-ground estimate
-  RECREATIONAL: 200,
-  TRAINED: 275,
-  ELITE: 350,
+  DEFAULT: 250,
+};
+
+/**
+ * D' validation range
+ */
+export const D_PRIME_RANGE = {
+  MIN: 50,
+  MAX: 500,
 };
 
 /**

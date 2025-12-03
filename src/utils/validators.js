@@ -133,6 +133,14 @@ export function validate2PointTest(distance1, time1, distance2, time2) {
       errors.distance2 =
         "Second test distance should be greater than first test distance";
     }
+
+    const velocity1 = num1 / t1Num;
+    const velocity2 = num2 / t2Num;
+
+    if (velocity1 <= velocity2) {
+      errors.time2 =
+        "First test must have a faster pace (shorter time per meter) than second test";
+    }
   }
 
   return {

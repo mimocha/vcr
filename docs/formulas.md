@@ -196,17 +196,18 @@ Zone 5 Upper: CV pace - 20 seconds per km
 ```
 
 **Implementation:**
+
 ```javascript
 // For percentage-based zones (Z1-Z3, Z4 lower)
-velocityMin = cvVelocityMs * zone.speedMin
-velocityMax = cvVelocityMs * zone.speedMax
-paceSecPerKm = 1000 / velocity  // Convert velocity to pace
+velocityMin = cvVelocityMs * zone.speedMin;
+velocityMax = cvVelocityMs * zone.speedMax;
+paceSecPerKm = 1000 / velocity; // Convert velocity to pace
 
 // For fixed time offset zones (Z4 upper, Z5)
-const cvPaceSecPerKm = 1000 / cvVelocityMs
-zone4Upper = cvPaceSecPerKm - 10  // seconds per km
-zone5Lower = cvPaceSecPerKm - 10  // seconds per km
-zone5Upper = cvPaceSecPerKm - 20  // seconds per km
+const cvPaceSecPerKm = 1000 / cvVelocityMs;
+zone4Upper = cvPaceSecPerKm - 10; // seconds per km
+zone5Lower = cvPaceSecPerKm - 10; // seconds per km
+zone5Upper = cvPaceSecPerKm - 20; // seconds per km
 // Convert paces back to velocities: velocity = 1000 / paceSecPerKm
 ```
 
@@ -233,11 +234,13 @@ Zone 3 (Tempo): 90-97% of CV
 #### Zones 4-5: Race Prediction-Based
 
 **Zone 4 (Threshold / Tempolauf - TL):**
+
 - **Lower Bound:** 10K race pace (slower)
 - **Upper Bound:** 5K race pace (faster)
 - **Physiological Target:** Competition-specific endurance, develops lactate threshold
 
 **Zone 5 (VO₂ Max / Wettkampfspezifische Ausdauer - WSA):**
+
 - **Lower Bound:** 3K race pace (slower)
 - **Upper Bound:** 1500m race pace (faster)
 - **Physiological Target:** Maximal oxygen uptake, develops vVO₂max
@@ -251,6 +254,7 @@ T₂ = T₁ × (D₂/D₁)^k
 ```
 
 **Where:**
+
 - `T₁` = Reference time (30-minute test = 1800 seconds)
 - `D₁` = Reference distance = CV × 1800 + D'
 - `T₂` = Predicted time for target distance
@@ -258,13 +262,15 @@ T₂ = T₁ × (D₂/D₁)^k
 - `k` = Fatigue factor (default: 1.06, range: 1.06-1.08 for amateurs)
 
 **Implementation:**
+
 ```javascript
 // Reference: 30-minute test as baseline
 const referenceTimeSeconds = 1800;
 const referenceDistanceMeters = cvVelocityMs * 1800 + dPrime;
 
 // Predict race time using Riegel formula
-const predictedTimeSeconds = referenceTimeSeconds *
+const predictedTimeSeconds =
+  referenceTimeSeconds *
   Math.pow(targetDistance / referenceDistanceMeters, fatigueFactor);
 
 // Convert to pace
@@ -277,6 +283,7 @@ The Riegel Power Law is more accurate than the hyperbolic CV model for shorter r
 #### Why Race-Based Zones?
 
 The race prediction-based methodology recognizes that high-intensity training zones (Z4-Z5) correspond to specific race paces:
+
 - Z4 develops the ability to sustain 5K-10K race pace
 - Z5 develops the ability to sustain 1500m-3K race pace
 
@@ -285,6 +292,7 @@ These zones scale **non-linearly** with performance - a percentage-based approac
 **Example Comparison:**
 
 For a runner with CV = 4.0 m/s (4:10/km):
+
 - **Percentage-based Z5 upper:** ~106% of CV = 3:56/km
 - **Race-based Z5 upper (1500m):** ~3:45-3:50/km (more accurate)
 
@@ -296,13 +304,27 @@ The race-based approach provides more physiologically accurate training paces, e
 
 ### Implementation Notes
 
+**D' Configuration for Single-Point Tests:**
+
+- Single-point tests (30-min, 45-min, 60-min, Cooper) allow users to configure D' via Advanced Settings
+- Each test type has a recommended default D' value:
+  - Cooper 12-min: **300m** (high anaerobic contribution)
+  - 30-min test: **250m** (standard default)
+  - 45-min test: **200m** (moderate anaerobic contribution)
+  - 60-min test: **150m** (minimal anaerobic contribution)
+- Users can select from presets (Low, Moderate-Low, Moderate, High, Very High) or enter a custom value
+- Custom values are validated to be within 50-500m range
+- For 2-point tests, D' is **calculated** directly from the test data (no configuration needed)
+
 **When to use D' for zone calculations:**
-- For single-point tests (30-min, Cooper, 45-min, 60-min), D' is **estimated** at 250m
+
+- For single-point tests, D' is **configurable** with test-specific defaults
 - For 2-point tests, D' is **calculated** directly from the test data
 - The Race Prediction-Based zone system **requires** D' for accurate predictions
 - If D' is unavailable, the system falls back to percentage-based calculations
 
 **Race prediction confidence:**
+
 - Race predictions using estimated D' have ±100m uncertainty
 - Race predictions using calculated D' are more accurate
 - The Riegel fatigue factor (1.06) is optimized for trained runners
@@ -391,7 +413,7 @@ function calculateCV30min(distance) {
     velocity_ms: cv_ms,
     pace_sec_per_km: pace_sec_per_km,
     pace_min_per_km: Math.floor(pace_sec_per_km / 60),
-    pace_sec: Math.floor(pace_sec_per_km % 60)
+    pace_sec: Math.floor(pace_sec_per_km % 60),
   };
 }
 
@@ -418,7 +440,7 @@ function calculateCVCooper(distance) {
     velocity_ms: cv_ms,
     pace_sec_per_km: pace_sec_per_km,
     pace_min_per_km: Math.floor(pace_sec_per_km / 60),
-    pace_sec: Math.floor(pace_sec_per_km % 60)
+    pace_sec: Math.floor(pace_sec_per_km % 60),
   };
 }
 
@@ -453,7 +475,7 @@ function calculateCV2Point(distance1, time1, distance2, time2) {
     d_prime: d_prime,
     pace_sec_per_km: pace_sec_per_km,
     pace_min_per_km: Math.floor(pace_sec_per_km / 60),
-    pace_sec: Math.floor(pace_sec_per_km % 60)
+    pace_sec: Math.floor(pace_sec_per_km % 60),
   };
 }
 ```
@@ -500,6 +522,12 @@ function calculateCV2Point(distance1, time1, distance2, time2) {
 
 ## Changelog
 
+- **2025-12-03:** Added configurable D' (Anaerobic Capacity) for one-point tests
+  - Users can now configure D' value in Advanced Settings for single-point tests
+  - Added test-specific recommended defaults: Cooper (300m), 30-min (250m), 45-min (200m), 60-min (150m)
+  - Dropdown presets with custom option (validated range: 50-500m)
+  - D' selection auto-adjusts when user changes test type
+  - D' value now displays dynamically in results (was fixed at 250m)
 - **2025-11-24_03:** Renamed zone systems for clarity
   - Renamed "Front Runner Sports" → "Offset-Based" (hybrid percentage + time offset approach)
   - Renamed "Lange & Pöhlitz 1995" → "Race Prediction-Based" (Riegel Power Law approach)

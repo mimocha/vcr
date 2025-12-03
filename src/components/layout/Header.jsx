@@ -47,8 +47,8 @@ export default function Header({ unitSystem, onUnitSystemChange }) {
                 absolute top-1 bottom-1 rounded-lg transition-all duration-300 ease-in-out
                 ${
                   isDark
-                    ? "bg-gradient-to-r from-cyan-600/80 via-blue-500/80 to-indigo-600/80"
-                    : "bg-gradient-to-r from-cyan-600/80 via-blue-600/80 to-indigo-600/80"
+                    ? "bg-blue-800/90 border border-white/30 shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+                    : "bg-blue-700/90 border border-white/40 shadow-[0_10px_30px_rgba(88,28,135,0.3)] backdrop-blur-xl"
                 }
               `}
               style={{
@@ -62,7 +62,7 @@ export default function Header({ unitSystem, onUnitSystemChange }) {
             <button
               onClick={() => onUnitSystemChange(UNIT_SYSTEMS.METRIC)}
               className={`
-                relative z-10 flex-1 px-4 py-2 rounded-lg font-medium transition-all text-center
+                relative z-10 flex-1 px-4 py-2 rounded-lg font-medium transition-all text-center w-24
                 ${
                   unitSystem === UNIT_SYSTEMS.METRIC
                     ? "text-white"
@@ -77,7 +77,7 @@ export default function Header({ unitSystem, onUnitSystemChange }) {
             <button
               onClick={() => onUnitSystemChange(UNIT_SYSTEMS.IMPERIAL)}
               className={`
-                relative z-10 flex-1 px-4 py-2 rounded-lg font-medium transition-all text-center
+                relative z-10 flex-1 px-4 py-2 rounded-lg font-medium transition-all text-center w-24
                 ${
                   unitSystem === UNIT_SYSTEMS.IMPERIAL
                     ? "text-white"

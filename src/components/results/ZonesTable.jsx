@@ -5,14 +5,8 @@
 
 import { useState } from "react";
 import Card from "../ui/Card";
-import Select from "../ui/Select";
 import LearnMoreModal from "../ui/LearnMoreModal";
-import {
-  UNIT_SYSTEMS,
-  ZONE_COLORS,
-  ZONE_SYSTEMS,
-  DEFAULT_ZONE_SYSTEM,
-} from "../../constants/zoneDefinitions";
+import { UNIT_SYSTEMS, ZONE_COLORS } from "../../constants/zoneDefinitions";
 import { formatPaceRange } from "../../utils/formatters";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -20,8 +14,6 @@ export default function ZonesTable({
   zones,
   unitSystem = UNIT_SYSTEMS.METRIC,
   cvMode = "raw",
-  zoneSystem = DEFAULT_ZONE_SYSTEM,
-  onZoneSystemChange,
   cvData,
 }) {
   const { isDark } = useTheme();
@@ -36,17 +28,6 @@ export default function ZonesTable({
   const d_prime_estimated = cvData?.d_prime_estimated;
 
   const isMetric = unitSystem === UNIT_SYSTEMS.METRIC;
-
-  // Get current zone system metadata
-  const currentSystem = Object.values(ZONE_SYSTEMS).find(
-    (sys) => sys.id === zoneSystem
-  );
-
-  // Prepare options for Select component
-  const zoneSystemOptions = Object.values(ZONE_SYSTEMS).map((sys) => ({
-    value: sys.id,
-    label: sys.name,
-  }));
 
   return (
     <Card title="Your Training Zones">
@@ -117,17 +98,6 @@ export default function ZonesTable({
         })}
       </div>
 
-      {/* Zone System Selector */}
-      <div className="my-4">
-        <Select
-          id="zone-system"
-          label="Zone Calculation Method"
-          value={zoneSystem}
-          onChange={(e) => onZoneSystemChange(e.target.value)}
-          options={zoneSystemOptions}
-        />
-      </div>
-
       {/* Learn More Button */}
       <div className="flex justify-center mt-4">
         <button
@@ -150,7 +120,6 @@ export default function ZonesTable({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         defaultTab="zones"
-        zoneSystem={zoneSystem}
         cvMode={cvMode}
         d_prime={d_prime}
         d_prime_estimated={d_prime_estimated}
